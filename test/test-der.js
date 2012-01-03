@@ -1,8 +1,8 @@
 var assert = require('assert');
 var der = require('der');
 
-describe('DER', function () {
-    describe('#integer()', function () {
+describe('der', function () {
+    describe('integer()', function () {
         it('returns one byte for zero', function () {
             var buf = der.integer(0);
             assert.equal(3, buf.length);
@@ -29,7 +29,7 @@ describe('DER', function () {
         });
     });
 
-    describe('#null()', function () {
+    describe('null()', function () {
         it('returns the null representation', function () {
             var buf = der.null();
             assert.equal(2, buf.length);
@@ -38,7 +38,7 @@ describe('DER', function () {
         });
     });
 
-    describe('#sequence()', function () {
+    describe('sequence()', function () {
         it('returns an empty sequence', function () {
             var buf = der.sequence(new Buffer(0));
             assert.equal(2, buf.length);
@@ -68,7 +68,7 @@ describe('DER', function () {
         });
     });
 
-    describe('#octetString()', function () {
+    describe('octetString()', function () {
         it('returns an empty string', function () {
             var buf = der.octetString('');
             assert.equal(2, buf.length);
@@ -88,7 +88,7 @@ describe('DER', function () {
         });
     });
 
-    describe('#oid()', function () {
+    describe('oid()', function () {
         it('throws an exception on empty OID', function (done) {
             try {
                 der.oid([]);
@@ -128,7 +128,7 @@ describe('DER', function () {
         });
     });
 
-    describe('#getRequest()', function () {
+    describe('getRequest()', function () {
         it('returns a get request sequence', function () {
             var buf = der.getRequest(new Buffer(0));
             assert.equal(2, buf.length);
