@@ -107,24 +107,9 @@ describe('asn1ber', function () {
         });
         it('returns an oid correctly', function () {
             var oid = [1,3,6,1,4,1,2680,1,2,7,3,2,0];
+            var correct = '06 0d 2b 06 01 04 01 94 78 01 02 07 03 02 00'.replace(/ /g, '');
             var buf = asn1ber.oid(oid);
-            assert.equal(15, buf.length);
-            assert.equal(6, buf[0]); // OID
-            assert.equal(13, buf[1]); // Length
-            // from http://www.rane.com/note161.html
-            assert.equal(0x2B, buf[2]);
-            assert.equal(0x06, buf[3]);
-            assert.equal(0x01, buf[4]);
-            assert.equal(0x04, buf[5]);
-            assert.equal(0x01, buf[6]);
-            assert.equal(0x94, buf[7]);
-            assert.equal(0x78, buf[8]);
-            assert.equal(0x01, buf[9]);
-            assert.equal(0x02, buf[10]);
-            assert.equal(0x07, buf[11]);
-            assert.equal(0x03, buf[12]);
-            assert.equal(0x02, buf[13]);
-            assert.equal(0x00, buf[14]);
+            assert.equal(correct, buf.toString('hex'));
         });
     });
 

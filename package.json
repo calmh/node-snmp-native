@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main" : "./lib/snmp.js",
     "scripts": {
-        "test": "NODE_PATH=lib mocha -R spec"
+        "test": "NODE_PATH=lib mocha -R spec && docco lib/*"
     },
     "dependencies": {
         "underscore": "1.2.x"
