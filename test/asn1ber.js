@@ -168,4 +168,26 @@ describe('asn1ber', function () {
             assert.equal('Solaris', str);
         });
     });
+
+    describe('parseOid()', function () {
+        it('throws an exception when passed a non-oid buffer', function (done) {
+            try {
+                var buf = new Buffer('020100', 'hex');
+                asn1ber.parseOid(buf);
+            } catch (err) {
+                done();
+            };
+        });
+        it('returns the shortest possible oid', function () {
+            var buf = new Buffer('06012b', 'hex');
+            var oid = asn1ber.parseOid(buf);
+            assert.deepEqual([1, 3], oid);
+        });
+        it('correctly parses a random oid', function () {
+            var correct = [1,3,6,1,4,1,2680,1,2,7,3,2,0];
+            var buf = new Buffer('06 0d 2b 06 01 04 01 94 78 01 02 07 03 02 00'.replace(/ /g, ''), 'hex');
+            var oid = asn1ber.parseOid(buf);
+            assert.deepEqual(correct, oid);
+        });
+    });
 });
