@@ -121,4 +121,51 @@ describe('asn1ber', function () {
             assert.equal(0, buf[1]); // Zero length
         });
     });
+
+    describe('parseInteger()', function () {
+        it('throws an exception when passed a non-integer buffer', function (done) {
+            try {
+                var buf = new Buffer('040100', 'hex');
+                asn1ber.parseInteger(buf);
+            } catch (err) {
+                done();
+            };
+        });
+        it('returns zero for an encoded zero', function () {
+            var buf = new Buffer('020100', 'hex');
+            var int = asn1ber.parseInteger(buf);
+            assert.equal(0, int);
+        });
+        it('returns one for an encoded one', function () {
+            var buf = new Buffer('020101', 'hex');
+            var int = asn1ber.parseInteger(buf);
+            assert.equal(1, int);
+        });
+        it('correctly parses a random larger integer', function () {
+            var buf = new Buffer('0204499602d2', 'hex');
+            var int = asn1ber.parseInteger(buf);
+            assert.equal(1234567890, int);
+        });
+    });
+
+    describe('parseOctetString()', function () {
+        it('throws an exception when passed a non-octetstring buffer', function (done) {
+            try {
+                var buf = new Buffer('020100', 'hex');
+                asn1ber.parseOctetString(buf);
+            } catch (err) {
+                done();
+            };
+        });
+        it('returns an empty string', function () {
+            var buf = new Buffer('0400', 'hex');
+            var str = asn1ber.parseOctetString(buf);
+            assert.equal('', str);
+        });
+        it('correctly parses a random string', function () {
+            var buf = new Buffer('0407536f6c61726973', 'hex');
+            var str = asn1ber.parseOctetString(buf);
+            assert.equal('Solaris', str);
+        });
+    });
 });
