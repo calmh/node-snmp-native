@@ -125,7 +125,7 @@ Verifies the type, then multiplies in each byte as it comes.</p>             </t
     <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">val</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Integer</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer does not appear to be an Integer&#39;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer &#39;</span> <span class="o">+</span> <span class="nx">buf</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; does not appear to be an Integer&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
