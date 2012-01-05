@@ -14,6 +14,8 @@ var ex4 = new Buffer('3030 0201 0104 0770 7269 7661 7465 a222 0204 07ba d0c8 020
 var ex5 = new Buffer('3030 0201 0104 0770 7269 7661 7465 a222 0204 15fc af68 0201 0002 0100 3014 3012 060a 2b06 0102 0102 0201 0507 4204 3b9a ca00'.replace(/ /g, ''), 'hex');
 // A TimeTicks GetResponse from Net-SNMP
 var ex6 = new Buffer('302e 0201 0104 0770 7269 7661 7465 a220 0204 72eb 6a85 0201 0002 0100 3012 3010 0609 2b06 0102 0119 0101 0043 0304 74ec'.replace(/ /g, ''), 'hex');
+// A large SysDescr response.
+var ex7 = new Buffer('3081 ab02 0101 0407 7072 6976 6174 65a2 819c 0204 5d7f aeee 0201 0002 0100 3081 8d30 818a 0608 2b06 0102 0101 0100 047e 4461 7277 696e 206a 626f 7267 2d6d 6270 2031 312e 322e 3020 4461 7277 696e 204b 6572 6e65 6c20 5665 7273 696f 6e20 3131 2e32 2e30 3a20 5475 6520 4175 6720 2039 2032 303a 3534 3a30 3020 5044 5420 3230 3131 3b20 726f 6f74 3a78 6e75 2d31 3639 392e 3234 2e38 7e31 2f52 454c 4541 5345 5f58 3836 5f36 3420 7838 365f 3634'.replace(/ /g, ''), 'hex');
 
 describe('snmp', function () {
     describe('encode()', function () {
@@ -135,6 +137,20 @@ describe('snmp', function () {
             assert.deepEqual([1, 3, 6, 1, 2, 1, 25, 1, 1, 0], pkt.pdu.varbinds[0].oid);
             assert.equal(67, pkt.pdu.varbinds[0].type);
             assert.equal(292076, pkt.pdu.varbinds[0].value);
+        });
+        it('returns a correctly parsed large OctetString response', function () {
+            var pkt = snmp.parse(ex7);
+            // Correct values as intepreted by Wireshark
+            assert.equal(1, pkt.version);
+            assert.equal('private', pkt.community);
+            assert.equal(2, pkt.pdu.type);
+            assert.equal(1568648942, pkt.pdu.reqid);
+            assert.equal(0, pkt.pdu.error);
+            assert.equal(0, pkt.pdu.errorIndex);
+            assert.equal(1, pkt.pdu.varbinds.length);
+            assert.deepEqual([1, 3, 6, 1, 2, 1, 1, 1, 0], pkt.pdu.varbinds[0].oid);
+            assert.equal(4, pkt.pdu.varbinds[0].type);
+            assert.equal("Darwin jborg-mbp 11.2.0 Darwin Kernel Version 11.2.0: Tue Aug  9 20:54:00 PDT 2011; root:xnu-1699.24.8~1/RELEASE_X86_64 x86_64", pkt.pdu.varbinds[0].value);
         });
     });
 });
