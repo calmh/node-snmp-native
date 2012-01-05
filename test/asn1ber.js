@@ -2,23 +2,23 @@ var assert = require('assert');
 var asn1ber = require('asn1ber');
 
 describe('asn1ber', function () {
-    describe('integer()', function () {
+    describe('encodeInteger()', function () {
         it('returns one byte for zero', function () {
-            var buf = asn1ber.integer(0);
+            var buf = asn1ber.encodeInteger(0);
             assert.equal(3, buf.length);
             assert.equal(2, buf[0]); // Integer
             assert.equal(1, buf[1]); // Length
             assert.equal(0, buf[2]); // Value
         });
         it('returns one byte for one', function () {
-            var buf = asn1ber.integer(1);
+            var buf = asn1ber.encodeInteger(1);
             assert.equal(3, buf.length);
             assert.equal(2, buf[0]); // Integer
             assert.equal(1, buf[1]); // Length
             assert.equal(1, buf[2]); // Value
         });
         it('returns correctly for larger integer', function () {
-            var buf = asn1ber.integer(1234567890);
+            var buf = asn1ber.encodeInteger(1234567890);
             assert.equal(6, buf.length);
             assert.equal(2, buf[0]); // Integer
             assert.equal(4, buf[1]); // Length
@@ -29,24 +29,24 @@ describe('asn1ber', function () {
         });
     });
 
-    describe('null()', function () {
+    describe('encodeNull()', function () {
         it('returns the null representation', function () {
-            var buf = asn1ber.null();
+            var buf = asn1ber.encodeNull();
             assert.equal(2, buf.length);
             assert.equal(5, buf[0]); // Null
             assert.equal(0, buf[1]); // Zero
         });
     });
 
-    describe('sequence()', function () {
+    describe('encodeSequence()', function () {
         it('returns an empty sequence', function () {
-            var buf = asn1ber.sequence(new Buffer(0));
+            var buf = asn1ber.encodeSequence(new Buffer(0));
             assert.equal(2, buf.length);
             assert.equal(0x30, buf[0]); // Sequence
             assert.equal(0, buf[1]); // Zero length
         });
         it('returns wrapped sequence', function () {
-            var buf = asn1ber.sequence(new Buffer(10));
+            var buf = asn1ber.encodeSequence(new Buffer(10));
             assert.equal(12, buf.length);
             assert.equal(0x30, buf[0]); // Sequence
             assert.equal(10, buf[1]); // Length
@@ -57,7 +57,7 @@ describe('asn1ber', function () {
                 orig[i] = i;
             }
 
-            var buf = asn1ber.sequence(orig);
+            var buf = asn1ber.encodeSequence(orig);
             var i;
             assert.equal(12, buf.length);
             assert.equal(0x30, buf[0]); // Sequence
@@ -68,16 +68,16 @@ describe('asn1ber', function () {
         });
     });
 
-    describe('octetString()', function () {
+    describe('encodeOctetString()', function () {
         it('returns an empty string', function () {
-            var buf = asn1ber.octetString('');
+            var buf = asn1ber.encodeOctetString('');
             assert.equal(2, buf.length);
             assert.equal(4, buf[0]); // OctetString
             assert.equal(0, buf[1]); // Zero length
         });
         it('returns a simple string correctly', function () {
             var str = 'abc';
-            var buf = asn1ber.octetString(str);
+            var buf = asn1ber.encodeOctetString(str);
             var i;
             assert.equal(5, buf.length);
             assert.equal(4, buf[0]); // OctetString
@@ -88,10 +88,10 @@ describe('asn1ber', function () {
         });
     });
 
-    describe('oid()', function () {
+    describe('encodeOid()', function () {
         it('throws an exception on empty OID', function (done) {
             try {
-                asn1ber.oid([]);
+                asn1ber.encodeOid([]);
             } catch (err) {
                 assert.equal("Minimum OID length is two.", err.message);
                 done();
@@ -99,7 +99,7 @@ describe('asn1ber', function () {
         });
         it('throws an exception for incorrect SNMP OIDs', function (done) {
             try {
-                asn1ber.oid([1, 5, 6, 7, 8]);
+                asn1ber.encodeOid([1, 5, 6, 7, 8]);
             } catch (err) {
                 assert.equal("SNMP OIDs always start with .1.3.", err.message);
                 done();
@@ -108,14 +108,14 @@ describe('asn1ber', function () {
         it('returns an oid correctly', function () {
             var oid = [1,3,6,1,4,1,2680,1,2,7,3,2,0];
             var correct = '06 0d 2b 06 01 04 01 94 78 01 02 07 03 02 00'.replace(/ /g, '');
-            var buf = asn1ber.oid(oid);
+            var buf = asn1ber.encodeOid(oid);
             assert.equal(correct, buf.toString('hex'));
         });
     });
 
-    describe('request()', function () {
+    describe('encodeRequest()', function () {
         it('returns a get request sequence', function () {
-            var buf = asn1ber.request(0, new Buffer(0));
+            var buf = asn1ber.encodeRequest(0, new Buffer(0));
             assert.equal(2, buf.length);
             assert.equal(160, buf[0]); // GetRequest
             assert.equal(0, buf[1]); // Zero length
