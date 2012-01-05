@@ -14,6 +14,7 @@ and receiving SNMPv2c messages.</p>
     <span class="nx">TimeTicks</span><span class="o">:</span> <span class="mh">0x43</span><span class="p">,</span>
     <span class="nx">Opaque</span><span class="o">:</span> <span class="mh">0x44</span><span class="p">,</span>
     <span class="nx">NsapAddress</span><span class="o">:</span> <span class="mh">0x45</span><span class="p">,</span>
+    <span class="nx">Counter64</span><span class="o">:</span> <span class="mh">0x46</span><span class="p">,</span>
     <span class="nx">GetRequestPDU</span><span class="o">:</span> <span class="mh">0xA0</span><span class="p">,</span>
     <span class="nx">GetNextRequestPDU</span><span class="o">:</span> <span class="mh">0xA1</span><span class="p">,</span>
     <span class="nx">GetResponsePDU</span><span class="o">:</span> <span class="mh">0xA2</span><span class="p">,</span>
@@ -124,7 +125,9 @@ The <code>type</code> code is 0 for <code>GetRequest</code>, 1 for <code>GetNext
 Verifies the type, then multiplies in each byte as it comes.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">parseInteger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">val</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Integer</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Integer</span> <span class="o">&amp;&amp;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Counter</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Counter64</span> <span class="o">&amp;&amp;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Gauge</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">TimeTicks</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer &#39;</span> <span class="o">+</span> <span class="nx">buf</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; does not appear to be an Integer&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 
