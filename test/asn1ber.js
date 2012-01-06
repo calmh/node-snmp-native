@@ -190,4 +190,21 @@ describe('asn1ber', function () {
             assert.deepEqual(correct, oid);
         });
     });
+
+    describe('parseArray()', function () {
+        it('throws an exception when passed a non-array buffer', function (done) {
+            try {
+                var buf = new Buffer('020100', 'hex');
+                asn1ber.parseArray(buf);
+            } catch (err) {
+                done();
+            };
+        });
+        it('correctly parses a random array', function () {
+            var correct = [0x30, 0x40, 0x16, 0x32];
+            var buf = new Buffer('40 04 30 40 16 32'.replace(/ /g, ''), 'hex');
+            var oid = asn1ber.parseArray(buf);
+            assert.deepEqual(correct, oid);
+        });
+    });
 });

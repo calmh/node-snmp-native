@@ -16,6 +16,10 @@ var ex5 = new Buffer('3030 0201 0104 0770 7269 7661 7465 a222 0204 15fc af68 020
 var ex6 = new Buffer('302e 0201 0104 0770 7269 7661 7465 a220 0204 72eb 6a85 0201 0002 0100 3012 3010 0609 2b06 0102 0119 0101 0043 0304 74ec'.replace(/ /g, ''), 'hex');
 // A large SysDescr response.
 var ex7 = new Buffer('3081 ab02 0101 0407 7072 6976 6174 65a2 819c 0204 5d7f aeee 0201 0002 0100 3081 8d30 818a 0608 2b06 0102 0101 0100 047e 4461 7277 696e 206a 626f 7267 2d6d 6270 2031 312e 322e 3020 4461 7277 696e 204b 6572 6e65 6c20 5665 7273 696f 6e20 3131 2e32 2e30 3a20 5475 6520 4175 6720 2039 2032 303a 3534 3a30 3020 5044 5420 3230 3131 3b20 726f 6f74 3a78 6e75 2d31 3639 392e 3234 2e38 7e31 2f52 454c 4541 5345 5f58 3836 5f36 3420 7838 365f 3634'.replace(/ /g, ''), 'hex');
+// A OID GetNextReponse
+var ex8 = new Buffer('30 35 02 01 01 04 07 70 72 69 76 61 74 65 a2 27 02 04 e6 34 17 a0 02 01 00 02 01 00 30 19 30 17 06 08 2b 06 01 02 01 01 02 00 06 0b 2b 06 01 04 01 bf 08 03 02 81 7f'.replace(/ /g, ''), 'hex');
+// An IpAddress GetNextResponst
+var ex9 = new Buffer('30 36 02 01 01 04 07 70 72 69 76 61 74 65 a2 28 02 04 45 20 95 bb 02 01 00 02 01 00 30 1a 30 18 06 10 2b 06 01 02 01 03 01 01 03 04 01 81 2c 14 0a 01 40 04 ac 14 0a 01'.replace(/ /g, ''), 'hex');
 
 describe('snmp', function () {
     describe('encode()', function () {
@@ -70,87 +74,43 @@ describe('snmp', function () {
         });
         it('returns a correctly parsed Net-SNMP OctetString GetResponse', function () {
             var pkt = snmp.parse(ex2);
-            // Correct values as intepreted by Wireshark
-            assert.equal(1, pkt.version);
-            assert.equal('nym.se', pkt.community);
-            assert.equal(2, pkt.pdu.type);
-            assert.equal(1501911408, pkt.pdu.reqid);
-            assert.equal(0, pkt.pdu.error);
-            assert.equal(0, pkt.pdu.errorIndex);
-            assert.equal(1, pkt.pdu.varbinds.length);
-            assert.deepEqual([1, 3, 6, 1, 2, 1, 1, 1, 0], pkt.pdu.varbinds[0].oid);
             assert.equal(4, pkt.pdu.varbinds[0].type);
             assert.equal('Solaris anto.nym.se 11.0 physical', pkt.pdu.varbinds[0].value);
         });
         it('returns a correctly parsed Net-SNMP Counter32 GetResponse', function () {
             var pkt = snmp.parse(ex3);
-            // Correct values as intepreted by Wireshark
-            assert.equal(1, pkt.version);
-            assert.equal('private', pkt.community);
-            assert.equal(2, pkt.pdu.type);
-            assert.equal(312570240, pkt.pdu.reqid);
-            assert.equal(0, pkt.pdu.error);
-            assert.equal(0, pkt.pdu.errorIndex);
-            assert.equal(1, pkt.pdu.varbinds.length);
-            assert.deepEqual([1, 3, 6, 1, 2, 1, 31, 1, 1, 1, 2, 1], pkt.pdu.varbinds[0].oid);
             assert.equal(65, pkt.pdu.varbinds[0].type);
             assert.equal(70, pkt.pdu.varbinds[0].value);
         });
         it('returns a correctly parsed Net-SNMP Counter64 GetResponse', function () {
             var pkt = snmp.parse(ex4);
-            // Correct values as intepreted by Wireshark
-            assert.equal(1, pkt.version);
-            assert.equal('private', pkt.community);
-            assert.equal(2, pkt.pdu.type);
-            assert.equal(129683656, pkt.pdu.reqid);
-            assert.equal(0, pkt.pdu.error);
-            assert.equal(0, pkt.pdu.errorIndex);
-            assert.equal(1, pkt.pdu.varbinds.length);
-            assert.deepEqual([1, 3, 6, 1, 2, 1, 31, 1, 1, 1, 6, 1], pkt.pdu.varbinds[0].oid);
             assert.equal(70, pkt.pdu.varbinds[0].type);
             assert.equal(341661, pkt.pdu.varbinds[0].value);
         });
         it('returns a correctly parsed Net-SNMP Gauge32 GetResponse', function () {
             var pkt = snmp.parse(ex5);
-            // Correct values as intepreted by Wireshark
-            assert.equal(1, pkt.version);
-            assert.equal('private', pkt.community);
-            assert.equal(2, pkt.pdu.type);
-            assert.equal(368881512, pkt.pdu.reqid);
-            assert.equal(0, pkt.pdu.error);
-            assert.equal(0, pkt.pdu.errorIndex);
-            assert.equal(1, pkt.pdu.varbinds.length);
-            assert.deepEqual([1, 3, 6, 1, 2, 1, 2, 2, 1, 5, 7], pkt.pdu.varbinds[0].oid);
             assert.equal(66, pkt.pdu.varbinds[0].type);
             assert.equal(1000000000, pkt.pdu.varbinds[0].value);
         });
         it('returns a correctly parsed Net-SNMP TimeTicks GetResponse', function () {
             var pkt = snmp.parse(ex6);
-            // Correct values as intepreted by Wireshark
-            assert.equal(1, pkt.version);
-            assert.equal('private', pkt.community);
-            assert.equal(2, pkt.pdu.type);
-            assert.equal(1928030853, pkt.pdu.reqid);
-            assert.equal(0, pkt.pdu.error);
-            assert.equal(0, pkt.pdu.errorIndex);
-            assert.equal(1, pkt.pdu.varbinds.length);
-            assert.deepEqual([1, 3, 6, 1, 2, 1, 25, 1, 1, 0], pkt.pdu.varbinds[0].oid);
             assert.equal(67, pkt.pdu.varbinds[0].type);
             assert.equal(292076, pkt.pdu.varbinds[0].value);
         });
         it('returns a correctly parsed large OctetString response', function () {
             var pkt = snmp.parse(ex7);
-            // Correct values as intepreted by Wireshark
-            assert.equal(1, pkt.version);
-            assert.equal('private', pkt.community);
-            assert.equal(2, pkt.pdu.type);
-            assert.equal(1568648942, pkt.pdu.reqid);
-            assert.equal(0, pkt.pdu.error);
-            assert.equal(0, pkt.pdu.errorIndex);
-            assert.equal(1, pkt.pdu.varbinds.length);
-            assert.deepEqual([1, 3, 6, 1, 2, 1, 1, 1, 0], pkt.pdu.varbinds[0].oid);
             assert.equal(4, pkt.pdu.varbinds[0].type);
             assert.equal("Darwin jborg-mbp 11.2.0 Darwin Kernel Version 11.2.0: Tue Aug  9 20:54:00 PDT 2011; root:xnu-1699.24.8~1/RELEASE_X86_64 x86_64", pkt.pdu.varbinds[0].value);
+        });
+        it('returns a correctly parsed ObjectId response', function () {
+            var pkt = snmp.parse(ex8);
+            assert.equal(6, pkt.pdu.varbinds[0].type);
+            assert.deepEqual([1,3,6,1,4,1,8072,3,2,255], pkt.pdu.varbinds[0].value);
+        });
+        it('returns a correctly parsed IpAddress response', function () {
+            var pkt = snmp.parse(ex9);
+            assert.equal(64, pkt.pdu.varbinds[0].type);
+            assert.deepEqual([172,20,10,1], pkt.pdu.varbinds[0].value);
         });
     });
 });
