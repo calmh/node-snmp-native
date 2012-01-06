@@ -192,6 +192,12 @@ describe('asn1ber', function () {
             var oid = asn1ber.parseOid(buf);
             assert.deepEqual(correct, oid);
         });
+        it('correctly parses a long oid with a large component', function () {
+            var correct = [1,3,6,1,2,1,7,7,1,8,2,16,32,1,4,112,0,39,4,214,0,0,0,0,0,0,0,2,123,0,0,0,4179634304];
+            var buf = new Buffer('06 252b 0601 0201 0707 0108 0210 2001 0470 0027 0481 5600 0000 0000 0000 027b 0000 008f c980 d100 0500'.replace(/ /g, ''), 'hex');
+            var oid = asn1ber.parseOid(buf);
+            assert.deepEqual(correct, oid);
+        });
     });
 
     describe('parseArray()', function () {
@@ -208,6 +214,15 @@ describe('asn1ber', function () {
             var buf = new Buffer('40 04 30 40 16 32'.replace(/ /g, ''), 'hex');
             var oid = asn1ber.parseArray(buf);
             assert.deepEqual(correct, oid);
+        });
+    });
+
+    describe('parseOpaque()', function () {
+        it('return the hex representation of an opaque value', function () {
+            var correct = '0x9f78043e920000';
+            var buf = new Buffer('44079f78043e920000', 'hex');
+            var str = asn1ber.parseOpaque(buf);
+            assert.deepEqual(correct, str);
         });
     });
 });
