@@ -4,11 +4,9 @@ var asn1ber = require('asn1ber');
 describe('asn1ber', function () {
     describe('encodeInteger()', function () {
         it('returns one byte for zero', function () {
+            var correct = '020100';
             var buf = asn1ber.encodeInteger(0);
-            assert.equal(3, buf.length);
-            assert.equal(2, buf[0]); // Integer
-            assert.equal(1, buf[1]); // Length
-            assert.equal(0, buf[2]); // Value
+            assert.equal(correct, buf.toString('hex'));
         });
         it('returns one byte for one', function () {
             var buf = asn1ber.encodeInteger(1);
@@ -16,6 +14,11 @@ describe('asn1ber', function () {
             assert.equal(2, buf[0]); // Integer
             assert.equal(1, buf[1]); // Length
             assert.equal(1, buf[2]); // Value
+        });
+         it('does not return first byte and first bit of second byte all ones', function () {
+             var correct = '020300ff94';
+            var buf = asn1ber.encodeInteger(0xff94);
+            assert.equal(correct, buf.toString('hex'));
         });
         it('returns correctly for larger integer', function () {
             var buf = asn1ber.encodeInteger(1234567890);
