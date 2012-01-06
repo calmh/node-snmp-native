@@ -1,6 +1,6 @@
 {
     "name" : "snmp-native",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "main" : "./lib/snmp.js",
     "scripts": {
         "test": "NODE_PATH=lib mocha -R spec && docco lib/*"
