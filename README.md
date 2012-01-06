@@ -50,12 +50,7 @@ There are further usage examples in the `example` directory.
 
 To install:
 
- - Drop this directory in `node_modules`. Call it `snmp`.
- - Enter the `snmp` directory and run `npm install` to pull the dependencies.
- - Enjoy!
-
-Once we're up to version 1.0, it will be published to be easily installed with
-NPM of course.
+    npm install snmp-native
 
 You can also view the annotated source code at http://nym.se/node-snmp-native/docs/
 
