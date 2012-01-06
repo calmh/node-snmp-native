@@ -51,3 +51,8 @@ There are further usage examples in the `example` directory.
 To install, simply drop this directory in `node_modules`. Once we're up to
 version 1.0, it will be published to be easily installed with NPM of course.
 
+You can also view the annotated source code at http://nym.se/node-snmp-native/docs/
+
+-- 
+Jakob Borg
+jakob@nym.se
