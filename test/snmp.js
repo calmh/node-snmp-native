@@ -113,5 +113,27 @@ describe('snmp', function () {
             assert.deepEqual([172,20,10,1], pkt.pdu.varbinds[0].value);
         });
     });
+
+    describe('compareOids()', function () {
+        it('returns zero for two empty OIDs', function () {
+            assert.equal(0, snmp.compareOids([], []));
+        });
+        it('returns in the favour of the non-undefinedOID', function () {
+            assert.equal(1, snmp.compareOids(undefined, []));
+            assert.equal(-1, snmp.compareOids([], undefined));
+        });
+        it('returns in the favour of the non-empty OID', function () {
+            assert.equal(1, snmp.compareOids([], [0]));
+            assert.equal(-1, snmp.compareOids([0], []));
+        });
+        it('returns in the favour of the larger OID', function () {
+            assert.equal(1, snmp.compareOids([1,2,1,2,1,2,1,2], [1,2,1,2,5,2]));
+            assert.equal(-1, snmp.compareOids([1,2,1,2,5,2], [1,2,1,2,1,2,1,2]));
+        });
+        it('returns in the favour of the longer OID', function () {
+            assert.equal(1, snmp.compareOids([1,2,1,2,1,2,1,2], [1,2,1,2,1,2,1,2,1,2]));
+            assert.equal(-1, snmp.compareOids([1,2,1,2,1,2,1,2,1,2,1,2], [1,2,1,2,1,2,1,2]));
+        });
+    });
 });
 
