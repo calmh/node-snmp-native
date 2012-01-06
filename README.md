@@ -1,7 +1,7 @@
 node-snmp-native
 ================
 
-This is (going to be) a native SNMP library for Node.js. The goal is to provide
+This is a native SNMP library for Node.js. The goal is to provide
 enough functionality to perform basic monitoring of network equipment. This
 includes:
 
@@ -13,9 +13,41 @@ includes:
 It specifically does **not** include:
 
  - Compatibility with SNMPv1, SNMPv2u or SNMPv3.
- - Support for Set requests.
+ - Support for Set requests. Even though this is easy, it's seldom recommended.
+ - MIB parsing.
 
 Everything should naturally happen in a nice non-blocking, asynchronous manner.
 
-Further features are up for discussion.
+Currently, the interface (which might evolve suddenly while the project is in
+0.x version territory) looks like this:
+
+    // The snmp object is the main entry point to the library.
+    var snmp = require('snmp');
+    
+    // A session is required to communicate with an agent.
+    var session = new snmp.Session('127.0.0.1', 'public');
+    
+    // All OIDs are represented as integer arrays.
+    var oid = [1, 3, 6, 1, 2, 1, 1, 1, 0];
+    
+    session.get(oid, function (err, pkt) {
+        if (err) {
+            console.log(err);
+        } else {
+            // The pkt parameter is a Packet instance, which is closely
+            // modelled after the actual layout of an SNMP packet.
+            // The least you need to know is that there is an array of varbinds
+            // that usually contain exactly one entry, in which the 'value'
+            // property holds the reply.
+            console.log(pkt.pdu.varbinds[0].value);
+        }
+    
+        // The session must be closed when you're done with it.
+        session.close();
+    });
+
+There are further usage examples in the `example` directory.
+
+To install, simply drop this directory in `node_modules`. Once we're up to
+version 1.0, it will be published to be easily installed with NPM of course.
 
