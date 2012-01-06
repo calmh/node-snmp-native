@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var snmp = require('./lib/snmp');
+var snmp = require('snmp');
 
 if (process.argv.length < 4) {
     console.log("Usage:");
