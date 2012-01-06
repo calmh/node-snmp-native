@@ -22,7 +22,7 @@ Currently, the interface (which might evolve suddenly while the project is in
 0.x version territory) looks like this:
 
     // The snmp object is the main entry point to the library.
-    var snmp = require('snmp');
+    var snmp = require('snmp-native');
     
     // A session is required to communicate with an agent.
     var session = new snmp.Session('127.0.0.1', 'public');
