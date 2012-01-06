@@ -1,7 +1,9 @@
 {
-    "name" : "snmp-native",
+    "name": "snmp-native",
+    "description": "A native Javascript SNMP implementation for Node.js",
+    "author": "Jakob Borg <jakob@nym.se>",
     "version": "0.0.1",
-    "main" : "./lib/snmp.js",
+    "main" : "lib/snmp.js",
     "scripts": {
         "test": "NODE_PATH=lib mocha -R spec && docco lib/*"
     },
