@@ -1,7 +1,9 @@
 {
     "name": "snmp-native",
     "description": "A native Javascript SNMP implementation for Node.js",
-    "author": "Jakob Borg <jakob@nym.se>",
+    "author": "Jakob Borg <jakob@nym.se> (http://nym.se/)",
+    "keywords": ["snmp", "asn.1", "asn1", "network", "monitoring"],
+    "homepage": "http://nym.se/node-snmp-native/docs/",
     "version": "0.0.1",
     "main" : "lib/snmp.js",
     "scripts": {
@@ -16,5 +18,9 @@
     "repository": {
         "type": "git",
         "url": "git://github.com/calmh/node-snmp-native.git"
+    },
+    "bugs": {
+        "url": "http://github.com/calmh/node-snmp-native/issues",
+        "email": "snmp@nym.se"
     }
 }
