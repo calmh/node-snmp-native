@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "main" : "lib/snmp.js",
     "scripts": {
-        "test": "NODE_PATH=lib mocha -R spec && docco lib/*"
+        "test": "NODE_PATH=lib mocha -R spec && docco lib/* && jslint lib/*"
     },
     "dependencies": {
         "underscore": "1.2.x"
