@@ -18,39 +18,13 @@ It specifically does **not** include:
 
 Everything should naturally happen in a nice non-blocking, asynchronous manner.
 
-Currently, the interface (which might evolve suddenly while the project is in
-0.x version territory) looks like this:
-
-    // The snmp object is the main entry point to the library.
-    var snmp = require('snmp-native');
-    
-    // A session is required to communicate with an agent.
-    var session = new snmp.Session('127.0.0.1', 'public');
-    
-    // All OIDs are represented as integer arrays.
-    var oid = [1, 3, 6, 1, 2, 1, 1, 1, 0];
-    
-    session.get(oid, function (err, pkt) {
-        if (err) {
-            console.log(err);
-        } else {
-            // The pkt parameter is a Packet instance, which is closely
-            // modelled after the actual layout of an SNMP packet.
-            // The least you need to know is that there is an array of varbinds
-            // that usually contain exactly one entry, in which the 'value'
-            // property holds the reply.
-            console.log(pkt.pdu.varbinds[0].value);
-        }
-    
-        // The session must be closed when you're done with it.
-        session.close();
-    });
-
-There are further usage examples in the `example` directory.
-
 To install:
 
     npm install snmp-native
+
+For usage, see http://nym.se/node-snmp-native/docs/example.html
+
+There are further usage examples in the `example` directory.
 
 You can also view the annotated source code at http://nym.se/node-snmp-native/docs/
 
