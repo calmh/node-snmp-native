@@ -1,3 +1,6 @@
+/*jslint onevar: true, node: true, continue: false, plusplus: false, bitwise: true, plusplus: true
+  newcap: true, strict: false, maxerr: 50, indent: 4, undef: true, sloppy: true, nomen: true*/
+
 // Example code for node-snmp-native.
 // ----
 
@@ -82,7 +85,7 @@ session2.getSubtree(oid, function (err, pkt) {
         session2.close();
     } else {
         vb = pkt.pdu.varbinds[0];
-        console.log('Name of interface ' + _.last(vb.oid)  +' is "' + vb.value + '"');
+        console.log('Name of interface ' + _.last(vb.oid)  + ' is "' + vb.value + '"');
     }
 });
 
@@ -114,4 +117,5 @@ The received Packet structure looks like this:
 Name of interface 2 is "e1000g0"
 Name of interface 3 is "vboxnet0"
 Name of interface 4 is "he0"
-*/ 
+*/
+
