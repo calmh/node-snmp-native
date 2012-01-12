@@ -54,6 +54,14 @@ describe('asn1ber', function () {
             assert.equal(0x30, buf[0]); // Sequence
             assert.equal(10, buf[1]); // Length
         });
+        it('returns correctly wrapped long sequence', function () {
+            var buf = asn1ber.encodeSequence(new Buffer(1024));
+            assert.equal(1024 + 1 + 3, buf.length);
+            assert.equal(0x30, buf[0]); // Sequence
+            assert.equal(128+2, buf[1]); // Length
+            assert.equal(0x04, buf[2]); // Length
+            assert.equal(0x00, buf[3]); // Length
+        });
         it('does not modify the passed data', function () {
             var orig = new Buffer(10);
             for (i = 0; i < 10; i++) {
@@ -223,6 +231,18 @@ describe('asn1ber', function () {
             var buf = new Buffer('44079f78043e920000', 'hex');
             var str = asn1ber.parseOpaque(buf);
             assert.deepEqual(correct, str);
+        });
+    });
+
+    describe('lengthArray()', function () {
+        it('returns the length directly if it\'s 127 or less', function () {
+            assert.deepEqual([ 0 ], asn1ber.lengthArray(0));
+            assert.deepEqual([ 47 ], asn1ber.lengthArray(47));
+            assert.deepEqual([ 127 ], asn1ber.lengthArray(127));
+        });
+        it('returns the length as an encoded integer if greater than 127', function () {
+            assert.deepEqual([ 128+1, 128 ], asn1ber.lengthArray(128));
+            assert.deepEqual([ 128+2, 0x04, 0x01 ], asn1ber.lengthArray(1025));
         });
     });
 });
