@@ -15,9 +15,14 @@ describe('asn1ber', function () {
             assert.equal(1, buf[1]); // Length
             assert.equal(1, buf[2]); // Value
         });
-         it('does not return first byte and first bit of second byte all ones', function () {
-             var correct = '020300ff94';
+        it('does not return first byte and first bit of second byte all ones', function () {
+            var correct = '020300ff94';
             var buf = asn1ber.encodeInteger(0xff94);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('does not return a negative-looking integer', function () {
+            var correct = '02020088';
+            var buf = asn1ber.encodeInteger(0x88);
             assert.equal(correct, buf.toString('hex'));
         });
         it('returns correctly for larger integer', function () {
