@@ -71,7 +71,7 @@ var oidStr = '.1.3.6.1.2.1.31.1.1.1.1';
 oid = _.map(_.compact(oidStr.split('.')), function (x) { return parseInt(x, 10); });
 
 // You can also get an entire subtree (an SNMP walk).
-session2.getSubtree(oid, function (err, pkt) {
+session2.getSubtree(oid, function (err, varbinds) {
     var vb;
 
     // The callback will be called once for each entry in the tree.
@@ -79,26 +79,38 @@ session2.getSubtree(oid, function (err, pkt) {
     if (err) {
         // If there is an error, such as an SNMP timeout, we'll end up here.
         console.log(err);
-    } else if (pkt === null) {
-        // A null pkt without an error means that we're at the end of tree.
-        // Close the session since we're done.
-        session2.close();
     } else {
-        vb = pkt.pdu.varbinds[0];
-        console.log('Name of interface ' + _.last(vb.oid)  + ' is "' + vb.value + '"');
+        _.each(varbinds, function (vb) {
+            console.log('Name of interface ' + _.last(vb.oid)  + ' is "' + vb.value + '"');
+        });
     }
+
+    session2.close();
 });
+
+// Finally, you can get all of a collection of OIDs in one go.
+// The semantics is similar to getSubtree.
+
+var session3 = new snmp.Session(host, community);
+var oids = [[1, 3, 6, 1, 2, 1, 1, 1, 0], [1, 3, 6, 1, 2, 1, 1, 2, 0]];
+session3.getAll(oids, function (err, varbinds) {
+    _.each(varbinds, function (vb) {
+        console.log(vb.oid + ' = ' + vb.value);
+    });
+});
+
 
 // Example output
 // -----
 
 // The expected output is something along these lines.
-// Note that the asynchronicity results in a response to the getSubtree
-// being printed before the system description.
+// Note that the asynchronicity results in the responses
+// being printed in a different order that what you might
+// guess from the above code.
 
 /*
-jb@apto:~/superpoller % node example.js
-Name of interface 1 is "lo0"
+1,3,6,1,2,1,1,1,0 = Solaris anto.nym.se 11.0 physical
+1,3,6,1,2,1,1,2,0 = 1,3,6,1,4,1,8072,3,2,3
 The system description is "Solaris anto.nym.se 11.0 physical"
 
 The received Packet structure looks like this:
@@ -106,16 +118,21 @@ The received Packet structure looks like this:
   community: 'public',
   pdu: 
    { type: 2,
-     reqid: 1353455559,
+     reqid: 1895785838,
      error: 0,
      errorIndex: 0,
      varbinds: 
       [ { type: 4,
           value: 'Solaris anto.nym.se 11.0 physical',
-          oid: [ 1, 3, 6, 1, 2, 1, 1, 1, 0 ] } ] } }
+          oid: [ 1, 3, 6, 1, 2, 1, 1, 1, 0 ] } ] },
+  receiveStamp: 1331322919951,
+  sendStamp: 1331322919944 }
 
+Name of interface 1 is "lo0"
 Name of interface 2 is "e1000g0"
 Name of interface 3 is "vboxnet0"
-Name of interface 4 is "he0"
+Name of interface 4 is "e1000g1"
+Name of interface 5 is "he0"
+Name of interface 6 is "nym0"
 */
 
