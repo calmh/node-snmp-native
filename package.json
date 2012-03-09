@@ -4,7 +4,7 @@
     "author": "Jakob Borg <jakob@nym.se> (http://nym.se/)",
     "keywords": ["snmp", "asn.1", "asn1", "network", "monitoring"],
     "homepage": "http://nym.se/node-snmp-native/docs/",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "main" : "lib/snmp.js",
     "scripts": {
         "test": "NODE_PATH=lib mocha -R spec && docco lib/* example.js && jslint lib/* example.js"
