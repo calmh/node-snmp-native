@@ -1,5 +1,5 @@
-/*jslint onevar: true, node: true, continue: false, plusplus: false, bitwise: true, plusplus: true
-  newcap: true, strict: false, maxerr: 50, indent: 4, undef: true, sloppy: true, nomen: true*/
+/*jslint node: true, continue: false, plusplus: false, bitwise: true, plusplus: true
+  newcap: true, maxerr: 50, indent: 4, undef: true, sloppy: true, nomen: true*/
 
 // Example code for node-snmp-native.
 // ----
