@@ -34,6 +34,18 @@ describe('snmp', function () {
             var msg = snmp.encode(pkt);
             assert.equal(msg.toString('hex'), correct);
         });
+        it('returns a correctly formatted buffer from a packet description of a set request', function () {
+            var correct = '302d 0201 0104 0770 7269 7661 7465 a31f 0204 380b b460 0201 0002 0100 3011 300f 060a 2b06 0102 0102 0201 0701 0201 02'.replace(/ /g, '');
+            var pkt = new snmp.Packet(); // A default getrequest
+            pkt.community = 'private';
+            pkt.pdu.reqid = 940291168;
+            pkt.pdu.type = 3;
+            pkt.pdu.varbinds[0].oid = [1, 3, 6, 1, 2, 1, 2, 2, 1, 7, 1];
+            pkt.pdu.varbinds[0].type = 2;
+            pkt.pdu.varbinds[0].value = 2;
+            var msg = snmp.encode(pkt);
+            assert.equal(msg.toString('hex'), correct);
+        });
     });
 
     describe('parse()', function () {
