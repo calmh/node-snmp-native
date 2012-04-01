@@ -241,13 +241,13 @@ describe('asn1ber', function () {
 
     describe('lengthArray()', function () {
         it('returns the length directly if it\'s 127 or less', function () {
-            assert.deepEqual([ 0 ], asn1ber.lengthArray(0));
-            assert.deepEqual([ 47 ], asn1ber.lengthArray(47));
-            assert.deepEqual([ 127 ], asn1ber.lengthArray(127));
+            assert.deepEqual([ 0 ], asn1ber.unittest.lengthArray(0));
+            assert.deepEqual([ 47 ], asn1ber.unittest.lengthArray(47));
+            assert.deepEqual([ 127 ], asn1ber.unittest.lengthArray(127));
         });
         it('returns the length as an encoded integer if greater than 127', function () {
-            assert.deepEqual([ 128+1, 128 ], asn1ber.lengthArray(128));
-            assert.deepEqual([ 128+2, 0x04, 0x01 ], asn1ber.lengthArray(1025));
+            assert.deepEqual([ 128+1, 128 ], asn1ber.unittest.lengthArray(128));
+            assert.deepEqual([ 128+2, 0x04, 0x01 ], asn1ber.unittest.lengthArray(1025));
         });
     });
 });

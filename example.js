@@ -1,6 +1,3 @@
-/*jslint node: true, continue: false, plusplus: false, bitwise: true, plusplus: true
-  newcap: true, maxerr: 50, indent: 4, undef: true, sloppy: true, nomen: true*/
-
 // Example code for node-snmp-native.
 // ----
 
@@ -109,6 +106,7 @@ var session4 = new snmp.Session(); // New session without IP + community paramet
 var oid = [1, 3, 6, 1, 2, 1, 1, 1, 0]; // sysDescr.0
 var cnt = 254; // Expected number of callbacks.
 for (var i = 1; i < 255; i++) {
+    /*jshint loopfunc:true */
     // We need a function to get a closure over i.
     (function (host) {
         session4.get(oid, host, 'public', function (err, pkt) {
@@ -145,12 +143,12 @@ The system description is "Solaris anto.nym.se 11.0 physical"
 The received Packet structure looks like this:
 { version: 1,
   community: 'public',
-  pdu: 
+  pdu:
    { type: 2,
      reqid: 1895785838,
      error: 0,
      errorIndex: 0,
-     varbinds: 
+     varbinds:
       [ { type: 4,
           value: 'Solaris anto.nym.se 11.0 physical',
           oid: [ 1, 3, 6, 1, 2, 1, 1, 1, 0 ] } ] },
