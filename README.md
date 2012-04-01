@@ -13,7 +13,6 @@ includes:
 It specifically does **not** include:
 
  - Compatibility with SNMPv1, SNMPv2u or SNMPv3.
- - Support for Set requests. Even though this is easy, it's seldom recommended.
  - MIB parsing.
 
 Everything should naturally happen in a nice non-blocking, asynchronous manner.
