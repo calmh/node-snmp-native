@@ -4,7 +4,7 @@
     "author": "Jakob Borg <jakob@nym.se> (http://nym.se/)",
     "keywords": ["snmp", "asn.1", "asn1", "network", "monitoring"],
     "homepage": "http://nym.se/node-snmp-native/docs/",
-    "version": "0.5.0",
+    "version": "1.0.0",
     "main" : "lib/snmp.js",
     "scripts": {
         "test": "NODE_PATH=lib mocha -R spec && docco lib/* example.js && jshint lib example.js"
@@ -13,8 +13,10 @@
         "underscore": "1.2.x"
     },
     "devDependencies": {
+        "jshint": "0.5.x",
         "mocha": "0.8.x",
-        "jshint": "0.5.x"
+        "should": "0.6.x",
+        "snmpjs": "*"
     },
     "repository": {
         "type": "git",
