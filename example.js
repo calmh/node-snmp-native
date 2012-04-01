@@ -88,7 +88,7 @@ session2.getSubtree(oid, function (err, varbinds) {
     session2.close();
 });
 
-// Finally, you can get all of a collection of OIDs in one go.
+// You can get all of a collection of OIDs in one go.
 // The semantics is similar to getSubtree.
 
 var session3 = new snmp.Session(host, community);
@@ -97,8 +97,37 @@ session3.getAll(oids, function (err, varbinds) {
     _.each(varbinds, function (vb) {
         console.log(vb.oid + ' = ' + vb.value);
     });
+    session3.close();
 });
 
+// You can also create a destination-less "session" to use on multiple
+// hosts. This is useful for conserving file descriptors when talking
+// to a large number of hosts. This example scans the 192.168.1.0/24
+// network for SNMP responders.
+
+var session4 = new snmp.Session(); // New session without IP + community parameters.
+var oid = [1, 3, 6, 1, 2, 1, 1, 1, 0]; // sysDescr.0
+var cnt = 254; // Expected number of callbacks.
+for (var i = 1; i < 255; i++) {
+    // We need a function to get a closure over i.
+    (function (host) {
+        session4.get(oid, host, 'public', function (err, pkt) {
+            if (err) {
+                // Probably a Timeout.
+                console.log('Error for ' + host + ': ' + err);
+            } else {
+                // Print the returned value (sysDescr).
+                var vb = pkt.pdu.varbinds[0];
+                console.log(host + ': ' + vb.oid + ' = ' + vb.value);
+            }
+
+            if (--cnt === 0) {
+                // All requests have returned, time to close the session and exit.
+                session4.close();
+            }
+        });
+    }('192.168.1.' + i));
+}
 
 // Example output
 // -----
