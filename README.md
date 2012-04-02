@@ -17,6 +17,12 @@ It specifically does **not** include:
 
 Everything should naturally happen in a nice non-blocking, asynchronous manner.
 
+Documentation
+=============
+
+See API documentation below, the [annotated source code](http://nym.se/node-snmp-native/docs/snmp.html)
+and an [example](http://nym.se/node-snmp-native/docs/example.html) to get started.
+
 Installation
 ------------
 
