@@ -45,23 +45,32 @@ overridden as needed. Useful parameters here are `host`, `port` and `family`.
     # Create an IPv6 Session.
     var session = new snmp.Session({ host: '2001:db8::42', family: 'udp6', community: 'private' });
 
-Default `options` if not specified:
+The following options are recognized as properties in the options object. All
+can be specified in the `Session` constructor and optionally overridden at a
+later time by setting them in the option object to a method call.
 
-    {
-        host: 'localhost',
-        port: 161,
-        community: 'public',
-        family: 'udp4'
-    }
+ - *host*: The host to send the request to. An resolvable name is allowed in
+   addition to IP addresses. Default: `'localhost'`.
+ - *port*: The UDP port number to send the request to. Default: `161`.
+ - *community*: The SNMP community name. Default: `'public'`.
+ - *family*: Address family to bind to. This is only used by the `Session`
+   constructor since that is when the bind is done. It cannot be changed or
+   overridden after construction. Default: `'udp4'`. Valid values: `'udp4'` or
+   `'udp6'`.
+ - *timeouts*: An array of timeout values. Values are times in milliseconds,
+   the length of the array is the total number of transmissions that will
+   occur. Default: `[5000, 5000, 5000, 5000]` (four attempts, with five seconds
+   between each). A backoff can be implemented by timeouts along the lines of
+   `[ 1000, 2000, 4000, 8000 ]`. Retransmissions can be disabled by using only
+   a single timeout value: `[ 5000 ]`.
 
 ### get(options, callback)
 
-Perform a simple GetRequest.
+Perform a simple GetRequest. Options (in addition to the ones defined above for `Session`):
 
-`get` takes an option object that needs at least the `oid` property set. Other
-properties are inherited from the `Session` defaults if missing. Will call the
-specified `callback` with an `error` object (`null` on success) and the varbind
-that was received.
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ 
+Will call the specified `callback` with an `error` object (`null` on success) and the varbind that was received.
 
     session.get({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbind) {
         if (error) {
@@ -77,12 +86,12 @@ You can also specify host, community, etc explicitly.
 
 ### getNext(options, callback)
 
-Perform a simple GetNextRequest.
+Perform a simple GetNextRequest. Options:
 
-`getNext` takes an option object that needs at least the `oid` property set. Other
-properties are inherited from the `Session` defaults if missing. Will call the
-specified `callback` with an `error` object (`null` on success) and the varbind
-that was received.
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+
+Will call the specified `callback` with an `error` object (`null` on success)
+and the varbind that was received.
 
     session.getNext({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbind) {
         if (error) {
@@ -94,14 +103,15 @@ that was received.
 
 ### getAll(options, callback)
 
-Perform repeated GetRequests to fetch all the required values.
+Perform repeated GetRequests to fetch all the required values. Options:
 
-`getAll` acts like `get`, except the options object needs a property `oids`
-that is an array of OIDs in array form. The callback will be called with an
-error object and a list of varbinds. If the options property `abortOnError` is
-false (default) any variables that couldn't be fetched will simply be omitted
-from the results. If it is true, the callback will be called with an error
-object on any failure.
+ - *oids*: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1, 3, 6, 1, 4, 1, 1, 2, 4]]`
+ - *abortOnError*: Whether to stop or continue when an error is encountered. Default: `false`. 
+
+The callback will be called with an error object or a list of varbinds. If the
+options property `abortOnError` is false (default) any variables that couldn't
+be fetched will simply be omitted from the results. If it is true, the callback
+will be called with an error object on any failure.
 
     var oids = [ [1, 3, 6, 1, 4, 1, 42, 1, 0], [1, 3, 6, 1, 4, 1, 42, 2, 0], ... ];
     session.getAll({ oids: oids }, function (error, varbinds) {
@@ -112,12 +122,12 @@ object on any failure.
 
 ### getSubtree(options, callback)
 
-Perform repeated GetNextRequests to fetch all values in the specified tree.
+Perform repeated GetNextRequests to fetch all values in the specified tree. Options:
 
-`getSubtree` takes an option object that needs at least the `oid` property set. Other
-properties are inherited from the `Session` defaults if missing. Will call the
-specified `callback` with an `error` object (`null` on success) and the varbind
-that was received.
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+
+Will call the specified `callback` with an `error` object (`null` on success)
+and the list of varbinds that was fetched.
 
     session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
         if (error) {
@@ -131,11 +141,13 @@ that was received.
 
 ### set(options, callback)
 
-Perform a simple SetRequest.
+Perform a simple SetRequest. Options:
 
-`set` is like `get`, except it needs to additional properties: `value` which is the
-integer value to set, and `type` which is the type of the value. Currently the only
-supported value is `asn1ber.T.Integer` (2).
+ - *oid*: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ - *value*: The value to set. Example: `42`
+ - *type*: The type of the value. Currently only `asn1ber.T.Integer` (2) is allowed. Example: `2`
+
+Example:
 
     session.set({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0], value: 42, type: 2 }, function (error, varbind) {
         if (error) {
