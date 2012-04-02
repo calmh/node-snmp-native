@@ -44,6 +44,20 @@ agent.request({ oid: '.1.3.6.42.1.2.3', columns: [ 1 ], handler: function (prq) 
     }
 } });
 
+agent.request({ oid: '.1.3.6.99.1.2.4', columns: [ 1 ], handler: function (prq) {
+    var val, vb;
+
+    if (!prq.instance) {
+        return prq.done();
+    }
+
+    val = snmpsrv.data.createData({ type: 'Integer', value: prq.instance[0] });
+    vb = snmpsrv.varbind.createVarbind({ oid: prq.oid, data: val });
+    setTimeout(function () {
+        prq.done(vb);
+    }, prq.instance[0]);
+} });
+
 describe('integration', function () {
     before(function () {
         agent.bind({ family: 'udp4', port: 1161 });
@@ -54,11 +68,6 @@ describe('integration', function () {
             agent.close();
         } catch (err) {
         }
-    });
-
-    beforeEach(function () {
-        snmp.defaultOptions.host = 'localhost';
-        snmp.defaultOptions.port = 161;
     });
 
     describe('get', function () {
@@ -129,7 +138,39 @@ describe('integration', function () {
         });
     });
 
+    describe('timouts', function () {
+        it('times out when the response takes longer than specified', function (done) {
+            var session = new snmp.Session({ port: 1161, timeouts: [ 50 ] });
+            session.get({ oid: [1, 3, 6, 99, 1, 2, 4, 1, 100] }, function (err, varbinds) {
+                should.not.exist(varbinds);
+                should.exist(err);
+                done();
+            });
+        });
+        it('does not time out when the timeout value is sufficient', function (done) {
+            var session = new snmp.Session({ port: 1161, timeouts: [ 150 ] });
+            session.get({ oid: [1, 3, 6, 99, 1, 2, 4, 1, 100] }, function (err, varbinds) {
+                should.not.exist(err);
+                should.exist(varbinds);
+                done();
+            });
+        });
+        it('does not time out when retransmits work', function (done) {
+            var session = new snmp.Session({ port: 1161, timeouts: [ 50, 125 ] });
+            session.get({ oid: [1, 3, 6, 99, 1, 2, 4, 1, 100] }, function (err, varbinds) {
+                should.not.exist(err);
+                should.exist(varbinds);
+                done();
+            });
+        });
+    });
+
     describe('options', function () {
+        beforeEach(function () {
+            snmp.defaultOptions.host = 'localhost';
+            snmp.defaultOptions.port = 161;
+        });
+
         it('gets a response given global default values', function (done) {
             snmp.defaultOptions.host = 'localhost';
             snmp.defaultOptions.port = 1161;
@@ -181,7 +222,7 @@ describe('integration', function () {
     });
     describe('getAll', function () {
         it('should get an array of oids', function (done) {
-            var session = new snmp.Session({ port: 1161 });
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
             var oids = [ [1, 3, 6, 42, 1, 2, 3, 1, 1], [1, 3, 6, 42, 1, 2, 3, 1, 2], [1, 3, 6, 42, 1, 2, 3, 1, 3], [1, 3, 6, 42, 1, 2, 3, 1, 4], [1, 3, 6, 42, 1, 2, 3, 1, 5] ];
             session.getAll({ oids: oids }, function (err, vbs) {
                 if (err) {
