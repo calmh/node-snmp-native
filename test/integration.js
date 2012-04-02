@@ -18,6 +18,8 @@ agent.request({ oid: '.1.3.6.42.1.2.3', columns: [ 1 ], handler: function (prq) 
             val = snmpsrv.data.createData({ type: 'TimeTicks', value: 1234567890 });
         } else if (prq.instance[0] === 5) {
             val = snmpsrv.data.createData({ type: 'Null', value: null });
+        } else if (prq.instance[0] === 6) {
+            val = snmpsrv.data.createData({ type: 'OctetString', value: new Buffer('001122334455', 'hex')});
         }
         vb = snmpsrv.varbind.createVarbind({ oid: prq.oid, data: val });
         prq.done(vb);
@@ -71,6 +73,20 @@ describe('integration', function () {
     });
 
     describe('get', function () {
+        it('sets valid send and receive timestamps', function (done) {
+            var session = new snmp.Session({ port: 1161 });
+            var now = Date.now();
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1, 1] }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(1);
+                    varbinds[0].sendStamp.should.be.within(now, now + 50);
+                    varbinds[0].receiveStamp.should.be.within(varbinds[0].sendStamp, now + 150);
+                    done();
+                }
+            });
+        });
         it('parses a single OctetString value', function (done) {
             var session = new snmp.Session({ port: 1161 });
             session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1, 1] }, function (err, varbinds) {
@@ -80,6 +96,20 @@ describe('integration', function () {
                     varbinds.length.should.equal(1);
                     varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 1]);
                     varbinds[0].value.should.equal('system description');
+                    varbinds[0].valueHex.should.equal('73797374656d206465736372697074696f6e');
+                    done();
+                }
+            });
+        });
+        it('parses a binary OctetString value', function (done) {
+            var session = new snmp.Session({ port: 1161 });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1, 6] }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(1);
+                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 6]);
+                    varbinds[0].valueHex.should.equal('001122334455');
                     done();
                 }
             });

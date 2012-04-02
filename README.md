@@ -70,6 +70,21 @@ later time by setting them in the option object to a method call.
    `[ 1000, 2000, 4000, 8000 ]`. Retransmissions can be disabled by using only
    a single timeout value: `[ 5000 ]`.
 
+### VarBind objects
+
+All of the `get*` functions return arrays of `VarBind` as the result to the
+callback. The `VarBind` objects have the following properties:
+
+ - *oid*: The OID they represent.
+ - *type*: The integer type code for the returned value.
+ - *value*: The value, in decoded form. This will be an integer for integer,
+   gauge, counter and timetick types, a string for an octet string value, an
+   array for array or IP number types.
+ - *valueRaw*: For octet string values, this is a raw `Buffer` representing the string.
+ - *valueHex*: For octet string values, this is a hex string representation of the value.
+ - *sendStamp*: The timestamp (in milliseconds) when the request was transmitted.
+ - *receiveStamp*: The timestamp (in milliseconds) when the response was received.
+
 ### get(options, callback)
 
 Perform a simple GetRequest. Options (in addition to the ones defined above for `Session`):
