@@ -68,7 +68,7 @@ later time by setting them in the option object to a method call.
 
 Perform a simple GetRequest. Options (in addition to the ones defined above for `Session`):
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
  
 Will call the specified `callback` with an `error` object (`null` on success) and the varbind that was received.
 
@@ -88,7 +88,7 @@ You can also specify host, community, etc explicitly.
 
 Perform a simple GetNextRequest. Options:
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
 
 Will call the specified `callback` with an `error` object (`null` on success)
 and the varbind that was received.
@@ -105,7 +105,7 @@ and the varbind that was received.
 
 Perform repeated GetRequests to fetch all the required values. Options:
 
- - *oids*: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1, 3, 6, 1, 4, 1, 1, 2, 4]]`
+ - *oids*: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1, 3, 6, 1, 4, 1, 1, 2, 4]]` or `['.1.3.6.1.4.1.1.2.3.4', '.1.3.6.1.4.1.2.3.4.5']`.
  - *abortOnError*: Whether to stop or continue when an error is encountered. Default: `false`. 
 
 The callback will be called with an error object or a list of varbinds. If the
@@ -124,7 +124,7 @@ will be called with an error object on any failure.
 
 Perform repeated GetNextRequests to fetch all values in the specified tree. Options:
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
 
 Will call the specified `callback` with an `error` object (`null` on success)
 and the list of varbinds that was fetched.
@@ -143,7 +143,7 @@ and the list of varbinds that was fetched.
 
 Perform a simple SetRequest. Options:
 
- - *oid*: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ - *oid*: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
  - *value*: The value to set. Example: `42`
  - *type*: The type of the value. Currently only `asn1ber.T.Integer` (2) is allowed. Example: `2`
 

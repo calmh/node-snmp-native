@@ -136,6 +136,19 @@ describe('integration', function () {
                 }
             });
         });
+        it('handles OIDs in string form', function (done) {
+            var session = new snmp.Session({ port: 1161 });
+            session.get({ oid: '.1.3.6.42.1.2.3.1.3' }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(1);
+                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 3]);
+                    varbinds[0].value.should.equal(1234567890);
+                    done();
+                }
+            });
+        });
     });
 
     describe('timouts', function () {
@@ -157,7 +170,7 @@ describe('integration', function () {
         });
         it('does not time out when retransmits work', function (done) {
             var session = new snmp.Session({ port: 1161, timeouts: [ 50, 125 ] });
-            session.get({ oid: [1, 3, 6, 99, 1, 2, 4, 1, 100] }, function (err, varbinds) {
+            session.get({ oid: '.1.3.6.99.1.2.4.1.100' }, function (err, varbinds) {
                 should.not.exist(err);
                 should.exist(varbinds);
                 done();
@@ -238,6 +251,23 @@ describe('integration', function () {
                 };
             });
         });
+        it('should get an array of oids in string form', function (done) {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            var oids = [ '.1.3.6.42.1.2.3.1.1', '.1.3.6.42.1.2.3.1.2', '.1.3.6.42.1.2.3.1.3', '.1.3.6.42.1.2.3.1.4', '.1.3.6.42.1.2.3.1.5' ];
+            session.getAll({ oids: oids }, function (err, vbs) {
+                if (err) {
+                    done(err);
+                } else {
+                    vbs.length.should.equal(5);
+                    vbs[0].value.should.equal('system description');
+                    vbs[1].value.should.equal(1234567890);
+                    vbs[2].value.should.equal(1234567890);
+                    vbs[3].value.should.equal(1234567890);
+                    should.not.exist(vbs[4].value);
+                    done();
+                };
+            });
+        });
         it('should get an array of oids from specific host and community', function (done) {
             var session = new snmp.Session();
             var oids = [ [1, 3, 6, 42, 1, 2, 3, 1, 1], [1, 3, 6, 42, 1, 2, 3, 1, 2], [1, 3, 6, 42, 1, 2, 3, 1, 3], [1, 3, 6, 42, 1, 2, 3, 1, 4], [1, 3, 6, 42, 1, 2, 3, 1, 5] ];
@@ -271,12 +301,41 @@ describe('integration', function () {
                 };
             });
         });
+        it('should get a new value with oid in string form', function (done) {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            session.getNext({ oid: '.1.3.6.42.1.2.3.1.5' }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(1);
+                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 105]);
+                    varbinds[0].value.should.equal(105);
+                    done();
+                };
+            });
+        });
     });
 
     describe('getSubtree', function () {
         it('should get a complete tree', function (done) {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             session.getSubtree({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, vbs) {
+                if (err) {
+                    done(err);
+                } else {
+                    vbs.length.should.equal(10);
+                    for (var i = 0; i < 10; i++) {
+                        vbs[i].type.should.equal(2);
+                        vbs[i].value.should.equal(1 + i * 100);
+                        vbs[i].oid.pop().should.equal(1 + i * 100);
+                    }
+                    done();
+                };
+            });
+        });
+        it('should get a complete tree with oid in string form', function (done) {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            session.getSubtree({ oid: '.1.3.6.42.1.2.3.1' }, function (err, vbs) {
                 if (err) {
                     done(err);
                 } else {
@@ -303,6 +362,12 @@ describe('integration', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             (function () {
                 session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) { });
+            }).should.not.throw();
+        });
+        it('should not throw an error for string oid', function () {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            (function () {
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) { });
             }).should.not.throw();
         });
     });
@@ -343,6 +408,16 @@ describe('integration', function () {
             // a communication problem. I would have expected something more immediate.
             var session = new snmp.Session({ family: 'udp4', host: '2001:db8::1', timeouts: [ 100 ] });
             session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) {
+                should.exist(err);
+                should.not.exist(varbinds);
+                done();
+            });
+        });
+        it('should return an error for invalid OID form', function (done) {
+            // This actually results in a timeout. That works, I guess, since it indicates
+            // a communication problem. I would have expected something more immediate.
+            var session = new snmp.Session({ family: 'udp4', host: '2001:db8::1', timeouts: [ 100 ] });
+            session.get({ oid: '1.3.6.42.1.2.3.1' }, function (err, varbinds) {
                 should.exist(err);
                 should.not.exist(varbinds);
                 done();
