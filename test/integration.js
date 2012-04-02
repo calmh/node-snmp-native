@@ -256,6 +256,7 @@ describe('integration', function () {
             });
         });
     });
+
     describe('getNext', function () {
         it('should get a new value', function (done) {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
@@ -303,6 +304,49 @@ describe('integration', function () {
             (function () {
                 session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) { });
             }).should.not.throw();
+        });
+    });
+
+    describe('errors', function () {
+        it('should return a noSuchObject varbind', function (done) {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            session.get({ oid: [1, 3, 6, 0] }, function (err, varbinds) {
+                should.not.exist(err);
+                should.exist(varbinds);
+                varbinds.length.should.equal(1);
+                varbinds[0].type.should.equal(128);
+                varbinds[0].value.should.equal('noSuchObject');
+                done();
+            });
+        });
+        it('should return a noSuchInstance varbind', function (done) {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) {
+                should.not.exist(err);
+                should.exist(varbinds);
+                varbinds.length.should.equal(1);
+                varbinds[0].type.should.equal(129);
+                varbinds[0].value.should.equal('noSuchInstance');
+                done();
+            });
+        });
+        it('should return an error for nonexistant host', function (done) {
+            var session = new snmp.Session({ host: '1.2.427.5' });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) {
+                should.exist(err);
+                should.not.exist(varbinds);
+                done();
+            });
+        });
+        it('should return an error for host of the wrong address family', function (done) {
+            // This actually results in a timeout. That works, I guess, since it indicates
+            // a communication problem. I would have expected something more immediate.
+            var session = new snmp.Session({ family: 'udp4', host: '2001:db8::1', timeouts: [ 100 ] });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) {
+                should.exist(err);
+                should.not.exist(varbinds);
+                done();
+            });
         });
     });
 });
