@@ -1,21 +1,23 @@
 node-snmp-native
 ================
 
-This is a native SNMP library for Node.js. The goal is to provide
-enough functionality to perform basic monitoring of network equipment. This
+This is a native SNMP library for Node.js. The goal is to provide enough
+functionality to perform large scale monitoring of network equipment. This
 includes:
 
  - Compatibility with SNMPv2c, including 64 bit data types.
- - Support for Get and GetNext requests.
+ - Support for Get, GetNext and Set requests.
  - No unusual external dependencies, no non-JS code.
- - High performance.
+ - Very high performance.
 
-It specifically does **not** include:
+It specifically does *not* include:
 
- - Compatibility with SNMPv1, SNMPv2u or SNMPv3.
- - MIB parsing.
+ - Compatibility with SNMPv1, SNMPv2u or SNMPv3. These are (in order)
+   deprecated, weird, and too complicated. Yes, it's an opinionated library.
+ - MIB parsing. Do this in your client app if it's necessary.
 
-Everything should naturally happen in a nice non-blocking, asynchronous manner.
+It's optimized for polling tens of thousands of counters on hundreds or
+thousands of hosts in a parallell manner.
 
 Documentation
 =============
@@ -75,7 +77,7 @@ later time by setting them in the option object to a method call.
 All of the `get*` functions return arrays of `VarBind` as the result to the
 callback. The `VarBind` objects have the following properties:
 
- - *oid*: The OID they represent.
+ - *oid*: The OID they represent (in array form).
  - *type*: The integer type code for the returned value.
  - *value*: The value, in decoded form. This will be an integer for integer,
    gauge, counter and timetick types, a string for an octet string value, an
@@ -89,9 +91,12 @@ callback. The `VarBind` objects have the following properties:
 
 Perform a simple GetRequest. Options (in addition to the ones defined above for `Session`):
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or
+   `'.1.3.6.1.4.1.1.2.3.4'`. Both forms are accepted, but the string form will
+   need to be parsed to an array, slightly increasing CPU usage.
  
-Will call the specified `callback` with an `error` object (`null` on success) and the varbind that was received.
+Will call the specified `callback` with an `error` object (`null` on success)
+and the varbind that was received.
 
     session.get({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbind) {
         if (error) {
@@ -124,10 +129,16 @@ and the varbind that was received.
 
 ### getAll(options, callback)
 
-Perform repeated GetRequests to fetch all the required values. Options:
+Perform repeated GetRequests to fetch all the required values. Multiple OIDs
+will get packed into as few GetRequest packets as possible to minimize
+roundtrip delays. Gets will be issued serially (not in parallell) to avoid
+flooding hosts. Options:
 
- - *oids*: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1, 3, 6, 1, 4, 1, 1, 2, 4]]` or `['.1.3.6.1.4.1.1.2.3.4', '.1.3.6.1.4.1.2.3.4.5']`.
- - *abortOnError*: Whether to stop or continue when an error is encountered. Default: `false`. 
+ - *oids*: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1,
+   3, 6, 1, 4, 1, 1, 2, 4]]` or `['.1.3.6.1.4.1.1.2.3.4',
+   '.1.3.6.1.4.1.2.3.4.5']`.
+ - *abortOnError*: Whether to stop or continue when an error is encountered.
+   Default: `false`.
 
 The callback will be called with an error object or a list of varbinds. If the
 options property `abortOnError` is false (default) any variables that couldn't
@@ -164,9 +175,11 @@ and the list of varbinds that was fetched.
 
 Perform a simple SetRequest. Options:
 
- - *oid*: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
- - *value*: The value to set. Example: `42`
- - *type*: The type of the value. Currently only `asn1ber.T.Integer` (2) is allowed. Example: `2`
+ - *oid*: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+   or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - *value*: The value to set. Example: `42`.
+ - *type*: The type of the value. Currently only `asn1ber.T.Integer` (2) is
+   allowed. Example: `2`.
 
 Example:
 
