@@ -296,6 +296,10 @@ Needs <code>options.oid</code> to be an OID in array form.</p>             </td>
     <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
     <span class="nx">parseOids</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
 
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[]);</span>
+    <span class="p">}</span>
+
     <span class="nx">pkt</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Packet</span><span class="p">();</span>
     <span class="nx">pkt</span><span class="p">.</span><span class="nx">community</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">community</span><span class="p">;</span>
     <span class="nx">pkt</span><span class="p">.</span><span class="nx">pdu</span><span class="p">.</span><span class="nx">varbinds</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">oid</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">oid</span><span class="p">;</span>
@@ -307,6 +311,15 @@ integer and <code>options.type</code> to be asn1ber.T.Integer (2).</p>          
 
     <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
     <span class="nx">parseOids</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Missing required option `oid`.&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Missing required option `value`.&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Missing required option `type`.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
     
     <span class="nx">pkt</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Packet</span><span class="p">();</span>
     <span class="nx">pkt</span><span class="p">.</span><span class="nx">community</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">community</span><span class="p">;</span>
@@ -325,6 +338,10 @@ and any successfully retrieved values sent to the callback.</p>             </td
 
     <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">options</span><span class="p">,</span> <span class="p">{</span> <span class="nx">abortOnError</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
     <span class="nx">parseOids</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">oids</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">oids</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[]);</span>
+    <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">getOne</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">oid</span><span class="p">,</span> <span class="nx">pkt</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">vb</span><span class="p">;</span>
@@ -365,6 +382,10 @@ Needs <code>options.oid</code> to be an OID in array form.</p>             </td>
     <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
     <span class="nx">parseOids</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
 
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[]);</span>
+    <span class="p">}</span>
+
     <span class="nx">pkt</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Packet</span><span class="p">();</span>
     <span class="nx">pkt</span><span class="p">.</span><span class="nx">community</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">community</span><span class="p">;</span>
     <span class="nx">pkt</span><span class="p">.</span><span class="nx">pdu</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -378,6 +399,11 @@ Needs <code>options.oid</code> to be an OID in array form.</p>             </td>
 
     <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
     <span class="nx">parseOids</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[]);</span>
+    <span class="p">}</span>
+
     <span class="nx">options</span><span class="p">.</span><span class="nx">startOid</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">oid</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-90">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-90">&#182;</a>               </div>               <p>Helper to check whether <code>oid</code> in inside the tree rooted at
 <code>root</code> or not.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">inTree</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>

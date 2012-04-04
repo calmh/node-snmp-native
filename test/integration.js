@@ -179,6 +179,17 @@ describe('integration', function () {
                 }
             });
         });
+        it('gracefully handles undefined oid', function (done) {
+            var session = new snmp.Session();
+            session.get({ }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(0);
+                    done();
+                }
+            });
+        });
     });
 
     describe('timouts', function () {
@@ -263,6 +274,7 @@ describe('integration', function () {
             });
         });
     });
+
     describe('getAll', function () {
         it('should get an array of oids', function (done) {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
@@ -315,6 +327,28 @@ describe('integration', function () {
                 };
             });
         });
+        it('gracefully handles undefined oids', function (done) {
+            var session = new snmp.Session();
+            session.getAll({ }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(0);
+                    done();
+                }
+            });
+        });
+        it('gracefully handles empty oids list', function (done) {
+            var session = new snmp.Session();
+            session.getAll({ oids: [] }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(0);
+                    done();
+                }
+            });
+        });
     });
 
     describe('getNext', function () {
@@ -342,6 +376,17 @@ describe('integration', function () {
                     varbinds[0].value.should.equal(105);
                     done();
                 };
+            });
+        });
+        it('gracefully handles undefined oid', function (done) {
+            var session = new snmp.Session();
+            session.getNext({ }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(0);
+                    done();
+                }
             });
         });
     });
@@ -379,6 +424,17 @@ describe('integration', function () {
                 };
             });
         });
+        it('gracefully handles undefined oid', function (done) {
+            var session = new snmp.Session();
+            session.getSubtree({ }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(0);
+                    done();
+                }
+            });
+        });
     });
 
     describe('set', function () {
@@ -399,6 +455,24 @@ describe('integration', function () {
             (function () {
                 session.set({ oid: '.1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) { });
             }).should.not.throw();
+        });
+        it('should throw an error for missing oid', function () {
+            var session = new snmp.Session();
+            (function () {
+                session.set({ value: 5, type: 2 }, function (err, vbs) { });
+            }).should.throw(/Missing required option/);
+        });
+        it('should throw an error for missing value', function () {
+            var session = new snmp.Session();
+            (function () {
+                session.set({ oid: '.1.3.6.42.1.2.3.1', type: 2 }, function (err, vbs) { });
+            }).should.throw(/Missing required option/);
+        });
+        it('should throw an error for missing type', function () {
+            var session = new snmp.Session();
+            (function () {
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 42 }, function (err, vbs) { });
+            }).should.throw(/Missing required option/);
         });
     });
 
