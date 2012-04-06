@@ -1,50 +1,64 @@
+/*globals it:false, describe:false before:false after:false beforeEach:false
+ */
+
 var snmpsrv = require('snmpjs');
 var assert = require('assert');
 var snmp = require('snmp');
 var should = require('should');
+var _ = require('underscore');
 
 var agent = snmpsrv.createAgent();
 
-agent.request({ oid: '.1.3.6.42.1.2.3', columns: [ 1 ], handler: function (prq) {
-    var val, vb;
-    if (prq.op === snmpsrv.pdu.GetRequest) {
-        if (prq.instance[0] === 1) {
-            val = snmpsrv.data.createData({ type: 'OctetString', value: 'system description' });
-        } else if (prq.instance[0] === 2) {
-            val = snmpsrv.data.createData({ type: 'Counter64', value: 1234567890 });
-        } else if (prq.instance[0] === 3) {
-            val = snmpsrv.data.createData({ type: 'Integer', value: 1234567890 });
-        } else if (prq.instance[0] === 4) {
-            val = snmpsrv.data.createData({ type: 'TimeTicks', value: 1234567890 });
-        } else if (prq.instance[0] === 5) {
-            val = snmpsrv.data.createData({ type: 'Null', value: null });
-        } else if (prq.instance[0] === 6) {
-            val = snmpsrv.data.createData({ type: 'OctetString', value: new Buffer('001122334455', 'hex')});
-        }
-        vb = snmpsrv.varbind.createVarbind({ oid: prq.oid, data: val });
-        prq.done(vb);
-    } else if (prq.op === snmpsrv.pdu.GetNextRequest) {
-        var oid, last;
-
-        oid = prq.addr;
-        if (prq.instance) {
-            last = prq.instance[0] + 100;
-            oid.pop();
-        } else {
-            last = 1;
-        }
-        if (last < 1000) {
-            oid.push(last);
-            oid = '.' + oid.join('.');
-
-            val = snmpsrv.data.createData({ type: 'Integer', value: last });
-            vb = snmpsrv.varbind.createVarbind({ oid: oid, data: val });
-            prq.done(vb);
-        } else {
-            prq.done();
+var data = { '1.3.6.42.1.2.3': // No leading dot!
+    {
+        '1': {
+            '1': { type: 'OctetString', value: 'system description' },
+            '2': { type: 'Counter64', value: 1234567890 },
+            '3': { type: 'Integer', value: 1234567890 },
+            '4': { type: 'TimeTicks', value: 1234567890 },
+            '5': { type: 'Null', value: null },
+            '6': { type: 'OctetString', value: new Buffer('001122334455', 'hex') }
         }
     }
-} });
+};
+
+function setupResponder(agent, data) {
+    _.each(data, function (responses, oid) {
+        var columns = _.map(_.keys(responses), function (x) { return parseInt(x, 10); });
+        var handler = function (prq) {
+            var lastPartOfOid, parts, col, inst, val, vb, nextOid;
+
+            lastPartOfOid = prq.oid.replace(oid + '.', '');
+            parts = _.map(lastPartOfOid.split('.'), function (x) { return parseInt(x, 10); });
+
+            if (prq.op === snmpsrv.pdu.GetRequest) {
+                col = parts[0].toString();
+                inst = parts[1].toString();
+                val = snmpsrv.data.createData(responses[col][inst]);
+                vb = snmpsrv.varbind.createVarbind({ oid: prq.oid, data: val });
+                prq.done(vb);
+            } else if (prq.op === snmpsrv.pdu.GetNextRequest) {
+                col = parts[0].toString();
+                if (parts.length < 2) {
+                    inst = _.keys(responses[col])[0];
+                } else {
+                    inst = (parts[1] + 1).toString();
+                }
+                if (responses[col][inst]) {
+                    nextOid = oid + '.' + col + '.' + inst;
+                    val = snmpsrv.data.createData(responses[col][inst]);
+                    vb = snmpsrv.varbind.createVarbind({ oid: nextOid, data: val });
+                    prq.done(vb);
+                } else {
+                    prq.done();
+                }
+            }
+        };
+        agent.request({ oid: oid, columns: columns, handler: handler });
+    });
+}
+
+setupResponder(agent, data);
 
 agent.request({ oid: '.1.3.6.99.1.2.4', columns: [ 1 ], handler: function (prq) {
     var val, vb;
@@ -290,7 +304,7 @@ describe('integration', function () {
                     vbs[3].value.should.equal(1234567890);
                     should.not.exist(vbs[4].value);
                     done();
-                };
+                }
             });
         });
         it('should get an array of oids in string form', function (done) {
@@ -307,7 +321,7 @@ describe('integration', function () {
                     vbs[3].value.should.equal(1234567890);
                     should.not.exist(vbs[4].value);
                     done();
-                };
+                }
             });
         });
         it('should get an array of oids from specific host and community', function (done) {
@@ -324,7 +338,7 @@ describe('integration', function () {
                     vbs[3].value.should.equal(1234567890);
                     should.not.exist(vbs[4].value);
                     done();
-                };
+                }
             });
         });
         it('gracefully handles undefined oids', function (done) {
@@ -359,10 +373,10 @@ describe('integration', function () {
                     done(err);
                 } else {
                     varbinds.length.should.equal(1);
-                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 105]);
-                    varbinds[0].value.should.equal(105);
+                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 6]);
+                    varbinds[0].valueHex.should.equal('001122334455');
                     done();
-                };
+                }
             });
         });
         it('should get a new value with oid in string form', function (done) {
@@ -372,10 +386,10 @@ describe('integration', function () {
                     done(err);
                 } else {
                     varbinds.length.should.equal(1);
-                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 105]);
-                    varbinds[0].value.should.equal(105);
+                    varbinds[0].oid.should.eql([1, 3, 6, 42, 1, 2, 3, 1, 6]);
+                    varbinds[0].valueHex.should.equal('001122334455');
                     done();
-                };
+                }
             });
         });
         it('gracefully handles undefined oid', function (done) {
@@ -398,14 +412,15 @@ describe('integration', function () {
                 if (err) {
                     done(err);
                 } else {
-                    vbs.length.should.equal(10);
-                    for (var i = 0; i < 10; i++) {
-                        vbs[i].type.should.equal(2);
-                        vbs[i].value.should.equal(1 + i * 100);
-                        vbs[i].oid.pop().should.equal(1 + i * 100);
-                    }
+                    vbs.length.should.equal(6);
+                    vbs[0].value.should.equal('system description');
+                    vbs[1].value.should.equal(1234567890);
+                    vbs[2].value.should.equal(1234567890);
+                    vbs[3].value.should.equal(1234567890);
+                    should.not.exist(vbs[4].value);
+                    vbs[5].valueHex.should.equal('001122334455');
                     done();
-                };
+                }
             });
         });
         it('should get a complete tree with oid in string form', function (done) {
@@ -414,14 +429,15 @@ describe('integration', function () {
                 if (err) {
                     done(err);
                 } else {
-                    vbs.length.should.equal(10);
-                    for (var i = 0; i < 10; i++) {
-                        vbs[i].type.should.equal(2);
-                        vbs[i].value.should.equal(1 + i * 100);
-                        vbs[i].oid.pop().should.equal(1 + i * 100);
-                    }
+                    vbs.length.should.equal(6);
+                    vbs[0].value.should.equal('system description');
+                    vbs[1].value.should.equal(1234567890);
+                    vbs[2].value.should.equal(1234567890);
+                    vbs[3].value.should.equal(1234567890);
+                    should.not.exist(vbs[4].value);
+                    vbs[5].valueHex.should.equal('001122334455');
                     done();
-                };
+                }
             });
         });
         it('gracefully handles undefined oid', function (done) {
@@ -440,39 +456,45 @@ describe('integration', function () {
     describe('set', function () {
         it('should throw an error for unknown value types', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            (function () {
+            var test = function () {
                 session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 4 }, function (err, vbs) { });
-            }).should.throw();
+            };
+            test.should.throw();
         });
         it('should not throw an error for integer type', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            (function () {
+            var test = function () {
                 session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) { });
-            }).should.not.throw();
+            };
+            test.should.not.throw();
         });
         it('should not throw an error for string oid', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            (function () {
+            var test = function () {
                 session.set({ oid: '.1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) { });
-            }).should.not.throw();
+            };
+            test.should.not.throw();
         });
         it('should throw an error for missing oid', function () {
             var session = new snmp.Session();
-            (function () {
+            var test = function () {
                 session.set({ value: 5, type: 2 }, function (err, vbs) { });
-            }).should.throw(/Missing required option/);
+            };
+            test.should.throw(/Missing required option/);
         });
         it('should throw an error for missing value', function () {
             var session = new snmp.Session();
-            (function () {
+            var test = function () {
                 session.set({ oid: '.1.3.6.42.1.2.3.1', type: 2 }, function (err, vbs) { });
-            }).should.throw(/Missing required option/);
+            };
+            test.should.throw(/Missing required option/);
         });
         it('should throw an error for missing type', function () {
             var session = new snmp.Session();
-            (function () {
+            var test = function () {
                 session.set({ oid: '.1.3.6.42.1.2.3.1', value: 42 }, function (err, vbs) { });
-            }).should.throw(/Missing required option/);
+            };
+            test.should.throw(/Missing required option/);
         });
     });
 
