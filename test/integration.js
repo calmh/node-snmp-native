@@ -17,7 +17,9 @@ var data = { '1.3.6.42.1.2.3': // No leading dot!
             '3': { type: 'Integer', value: 1234567890 },
             '4': { type: 'TimeTicks', value: 1234567890 },
             '5': { type: 'Null', value: null },
-            '6': { type: 'OctetString', value: new Buffer('001122334455', 'hex') }
+            '6': { type: 'OctetString', value: new Buffer('001122334455', 'hex') },
+            '7': { type: 'Counter32', value: 4294967295 },
+            '8': { type: 'Counter64', value: { lo: 0xffffffff, hi: 0xffffffff }}, // As close to 2^64-1 as Javascript can get...
         }
     }
 };
@@ -26,27 +28,46 @@ function setupResponder(agent, data) {
     _.each(data, function (responses, oid) {
         var columns = _.map(_.keys(responses), function (x) { return parseInt(x, 10); });
         var handler = function (prq) {
-            var lastPartOfOid, parts, col, inst, val, vb, nextOid;
+            var lastPartOfOid, parts, col, inst, ival, val, vb, nextOid;
 
-            lastPartOfOid = prq.oid.replace(oid + '.', '');
-            parts = _.map(lastPartOfOid.split('.'), function (x) { return parseInt(x, 10); });
+            lastPartOfOid = prq.oid.replace(oid, '').replace(/^\./, '');
+            parts = _.map(_.compact(lastPartOfOid.split('.')), function (x) { return parseInt(x, 10); });
 
             if (prq.op === snmpsrv.pdu.GetRequest) {
                 col = parts[0].toString();
                 inst = parts[1].toString();
-                val = snmpsrv.data.createData(responses[col][inst]);
+                ival = responses[col][inst].value;
+                if (typeof ival === 'function') {
+                    ival = ival();
+                }
+                val = snmpsrv.data.createData({ type: responses[col][inst].type, value: ival });
                 vb = snmpsrv.varbind.createVarbind({ oid: prq.oid, data: val });
                 prq.done(vb);
             } else if (prq.op === snmpsrv.pdu.GetNextRequest) {
-                col = parts[0].toString();
-                if (parts.length < 2) {
+                if (parts.length === 0) {
+                    col = columns[0];
                     inst = _.keys(responses[col])[0];
-                } else {
+                } else if (parts.length === 1) {
+                    col = parts[0].toString();
+                    inst = _.keys(responses[col])[0];
+                } else if (parts.length === 2) {
+                    col = parts[0].toString();
                     inst = (parts[1] + 1).toString();
+                    if (!responses[col][inst]) {
+                        col = (parts[0] + 1).toString();
+                        if (!responses[col]) {
+                            return prq.done();
+                        }
+                        inst = _.keys(responses[col])[0];
+                    }
                 }
                 if (responses[col][inst]) {
                     nextOid = oid + '.' + col + '.' + inst;
-                    val = snmpsrv.data.createData(responses[col][inst]);
+                    ival = responses[col][inst].value;
+                    if (typeof ival === 'function') {
+                        ival = ival();
+                    }
+                    val = snmpsrv.data.createData({ type: responses[col][inst].type, value: ival });
                     vb = snmpsrv.varbind.createVarbind({ oid: nextOid, data: val });
                     prq.done(vb);
                 } else {
@@ -200,6 +221,30 @@ describe('integration', function () {
                     done(err);
                 } else {
                     varbinds.length.should.equal(0);
+                    done();
+                }
+            });
+        });
+        it('correctly understands a 2^32-1 Counter32', function (done) {
+            var session = new snmp.Session({ port: 1161 });
+            session.get({ oid: '.1.3.6.42.1.2.3.1.7' }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(1);
+                    varbinds[0].value.should.equal(4294967295); // 2^32 - 1
+                    done();
+                }
+            });
+        });
+        it('correctly understands a 2^64-1 Counter64', function (done) {
+            var session = new snmp.Session({ port: 1161 });
+            session.get({ oid: '.1.3.6.42.1.2.3.1.8' }, function (err, varbinds) {
+                if (err) {
+                    done(err);
+                } else {
+                    varbinds.length.should.equal(1);
+                    varbinds[0].value.should.equal(18446744073709552000); // 2^64 - 1, or as close as Javascripts float type comes.
                     done();
                 }
             });
@@ -412,7 +457,7 @@ describe('integration', function () {
                 if (err) {
                     done(err);
                 } else {
-                    vbs.length.should.equal(6);
+                    vbs.length.should.equal(8);
                     vbs[0].value.should.equal('system description');
                     vbs[1].value.should.equal(1234567890);
                     vbs[2].value.should.equal(1234567890);
@@ -429,7 +474,7 @@ describe('integration', function () {
                 if (err) {
                     done(err);
                 } else {
-                    vbs.length.should.equal(6);
+                    vbs.length.should.equal(8);
                     vbs[0].value.should.equal('system description');
                     vbs[1].value.should.equal(1234567890);
                     vbs[2].value.should.equal(1234567890);
