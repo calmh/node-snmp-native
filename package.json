@@ -7,7 +7,9 @@
     "version": "1.0.2",
     "main" : "lib/snmp.js",
     "scripts": {
-        "test": "jshint lib example.js && NODE_PATH=lib mocha -R spec && docco lib/* example.js 2>/dev/null"
+        "test": "NODE_PATH=lib mocha -R spec",
+        "hint": "jshint *.js lib/*.js",
+        "doc": "docco lib/* example.js 2>/dev/null"
     },
     "dependencies": {
         "underscore": "1.2.x"
