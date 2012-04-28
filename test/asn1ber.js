@@ -102,6 +102,24 @@ describe('asn1ber', function () {
                 assert.equal(str.charCodeAt(i), buf[i+2]);
             }
         });
+        it('returns a simple buffer correctly', function () {
+            var orig = new Buffer('0123456789', 'hex');
+            var buf = asn1ber.encodeOctetString(orig);
+            var i;
+            assert.equal(7, buf.length);
+            assert.equal(4, buf[0]); // OctetString
+            assert.equal(orig.length, buf[1]); // Length
+            for (i = 0; i < orig.length; i++) {
+                assert.equal(orig[i], buf[i+2]);
+            }
+        });
+        it('throws an exception for unknown source types', function (done) {
+            try {
+                asn1ber.encodeOctetString(12);
+            } catch (err) {
+                done();
+            }
+        });
     });
 
     describe('encodeOid()', function () {
@@ -231,6 +249,14 @@ describe('asn1ber', function () {
     });
 
     describe('parseOpaque()', function () {
+        it('throws an exception when passed a non-opaque buffer', function (done) {
+            try {
+                var buf = new Buffer('020100', 'hex');
+                asn1ber.parseOpaque(buf);
+            } catch (err) {
+                done();
+            };
+        });
         it('return the hex representation of an opaque value', function () {
             var correct = '0x9f78043e920000';
             var buf = new Buffer('44079f78043e920000', 'hex');
