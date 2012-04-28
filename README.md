@@ -13,14 +13,21 @@
 node-snmp-native
 ================
 
-This is a native SNMP library for Node.js. The goal is to provide enough
-functionality to perform large scale monitoring of network equipment. This
-includes:
+This is a native SNMP library for Node.js. The purpose is to provide enough
+functionality to perform large scale monitoring of network equipment. Current
+features towards this end are:
 
- - Compatibility with SNMPv2c, including 64 bit data types.
- - Support for Get, GetNext and Set requests.
- - No unusual external dependencies, no non-JS code.
- - Very high performance.
+ - Full implementation of SNMPv2c, including 64 bit data types.
+ - Support for Get, GetNext and Set requests, with optimizations such as GetAll
+   and GetSubtree.
+ - No unusual external dependencies, no non-JavaScript code.
+ - Very high performance, unlimited parallellism. (There are always limits.
+   However, there are no arbitrary such imposed by this code and you at least
+   won't run out of file descriptors.)
+ - De facto standards compliance. Generated packets are compared against
+   Net-SNMP and should be identical in all relevant aspects.
+ - Well tested. Test coverage should be at or close to 100% for all important
+   code paths.
 
 It specifically does *not* include:
 
@@ -29,7 +36,9 @@ It specifically does *not* include:
  - MIB parsing. Do this in your client app if it's necessary.
 
 It's optimized for polling tens of thousands of counters on hundreds or
-thousands of hosts in a parallell manner.
+thousands of hosts in a parallell manner. This is known to work (although
+performance might be limited by less than optimal SNMP agent implementations in
+random network gear).
 
 Documentation
 =============
