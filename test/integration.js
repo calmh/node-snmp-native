@@ -269,6 +269,26 @@ describe('integration', function () {
     });
 
     describe('timouts', function () {
+        it('should encode the send time in the request id', function (done) {
+            var now = Date.now(), req;
+            var session = new snmp.Session({ port: 1161, timeouts: [ 50 ] });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1, 1] }, function (err, varbinds) {
+                should.not.exist(err);
+                should.exist(varbinds);
+                varbinds.length.should.equal(1);
+                // Truncate to 22 bits
+                now &= 0x1fffff;
+                // The request id should be the truncated time in millis, shifted
+                // ten bits to the left.
+                req = varbinds[0].requestId >>> 10;
+                (req - now).should.be.within(-5, 0);
+                // The leftmost ten bits should be an increasing for packets
+                // sent the same millisecond. It should be at most two.
+                req = varbinds[0].requestId & 0x3ff;
+                req.should.be.within(1, 2);
+                done();
+            });
+        });
         it('times out when the response takes longer than specified', function (done) {
             var session = new snmp.Session({ port: 1161, timeouts: [ 50 ] });
             session.get({ oid: [1, 3, 6, 12, 1, 2, 4, 1, 100] }, function (err, varbinds) {
