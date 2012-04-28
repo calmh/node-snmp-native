@@ -1,11 +1,12 @@
 /*globals it:false, describe:false before:false after:false beforeEach:false
  */
 
-var snmpsrv = require('snmpjs');
-var assert = require('assert');
-var snmp = require('snmp');
-var should = require('should');
 var _ = require('underscore');
+var assert = require('assert');
+var dgram = require('dgram');
+var should = require('should');
+var snmp = require('snmp');
+var snmpsrv = require('snmpjs');
 
 var agent = snmpsrv.createAgent();
 
@@ -20,6 +21,11 @@ var data = { '1.3.6.42.1.2.3': // No leading dot!
             '6': { type: 'OctetString', value: new Buffer('001122334455', 'hex') },
             '7': { type: 'Counter32', value: 4294967295 },
             '8': { type: 'Counter64', value: { lo: 0xffffffff, hi: 0xffffffff }}, // As close to 2^64-1 as Javascript can get...
+        }
+    },
+    '1.3.6.42.1.2.4': {
+        '1': {
+            '1': { type: 'Opaque', value: new Buffer('11223344','hex') }
         }
     }
 };
@@ -44,7 +50,7 @@ function setupResponder(agent, data) {
                 vb = snmpsrv.varbind.createVarbind({ oid: prq.oid, data: val });
                 prq.done(vb);
             } else if (prq.op === snmpsrv.pdu.GetNextRequest) {
-                if (parts.length === 0) {
+                if (parts.length === 0 || parts.length > 2) {
                     col = columns[0];
                     inst = _.keys(responses[col])[0];
                 } else if (parts.length === 1) {
@@ -61,7 +67,9 @@ function setupResponder(agent, data) {
                         inst = _.keys(responses[col])[0];
                     }
                 }
-                if (responses[col][inst]) {
+                if (!col || !inst) {
+                    prq.done()
+                } else if (responses[col][inst]) {
                     nextOid = oid + '.' + col + '.' + inst;
                     ival = responses[col][inst].value;
                     if (typeof ival === 'function') {
@@ -81,7 +89,7 @@ function setupResponder(agent, data) {
 
 setupResponder(agent, data);
 
-agent.request({ oid: '.1.3.6.99.1.2.4', columns: [ 1 ], handler: function (prq) {
+agent.request({ oid: '.1.3.6.12.1.2.4', columns: [ 1 ], handler: function (prq) {
     var val, vb;
 
     if (!prq.instance) {
@@ -95,6 +103,14 @@ agent.request({ oid: '.1.3.6.99.1.2.4', columns: [ 1 ], handler: function (prq) 
     }, prq.instance[0]);
 } });
 
+// Create a fake server that reponds with nonsense.
+
+var server = dgram.createSocket('udp4');
+server.on('message', function(msg, rinfo) {
+    server.send(new Buffer(100), 0, 100, rinfo.port, rinfo.address);
+});
+server.bind(1162);
+
 describe('integration', function () {
     before(function () {
         agent.bind({ family: 'udp4', port: 1161 });
@@ -102,6 +118,7 @@ describe('integration', function () {
 
     after(function () {
         try {
+            server.close();
             agent.close();
         } catch (err) {
         }
@@ -254,7 +271,7 @@ describe('integration', function () {
     describe('timouts', function () {
         it('times out when the response takes longer than specified', function (done) {
             var session = new snmp.Session({ port: 1161, timeouts: [ 50 ] });
-            session.get({ oid: [1, 3, 6, 99, 1, 2, 4, 1, 100] }, function (err, varbinds) {
+            session.get({ oid: [1, 3, 6, 12, 1, 2, 4, 1, 100] }, function (err, varbinds) {
                 should.not.exist(varbinds);
                 should.exist(err);
                 done();
@@ -262,7 +279,7 @@ describe('integration', function () {
         });
         it('does not time out when the timeout value is sufficient', function (done) {
             var session = new snmp.Session({ port: 1161, timeouts: [ 150 ] });
-            session.get({ oid: [1, 3, 6, 99, 1, 2, 4, 1, 100] }, function (err, varbinds) {
+            session.get({ oid: [1, 3, 6, 12, 1, 2, 4, 1, 100] }, function (err, varbinds) {
                 should.not.exist(err);
                 should.exist(varbinds);
                 done();
@@ -270,7 +287,7 @@ describe('integration', function () {
         });
         it('does not time out when retransmits work', function (done) {
             var session = new snmp.Session({ port: 1161, timeouts: [ 50, 125 ] });
-            session.get({ oid: '.1.3.6.99.1.2.4.1.100' }, function (err, varbinds) {
+            session.get({ oid: '.1.3.6.12.1.2.4.1.100' }, function (err, varbinds) {
                 should.not.exist(err);
                 should.exist(varbinds);
                 done();
@@ -489,17 +506,12 @@ describe('integration', function () {
         });
         it('should get a complete tree with oid in string form', function (done) {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            session.getSubtree({ oid: '.1.3.6.42.1.2.3.1' }, function (err, vbs) {
+            session.getSubtree({ oid: '.1.3.6.42.1.2.4.1' }, function (err, vbs) {
                 if (err) {
                     done(err);
                 } else {
-                    vbs.length.should.equal(8);
-                    vbs[0].value.should.equal('system description');
-                    vbs[1].value.should.equal(1234567890);
-                    vbs[2].value.should.equal(1234567890);
-                    vbs[3].value.should.equal(1234567890);
-                    should.not.exist(vbs[4].value);
-                    vbs[5].valueHex.should.equal('001122334455');
+                    vbs.length.should.equal(1);
+                    vbs[0].value.should.equal('0x11223344'); // Opaque
                     done();
                 }
             });
@@ -616,6 +628,13 @@ describe('integration', function () {
                 should.not.exist(varbinds);
                 done();
             });
+        });
+        it('should throw a parse error when the recieved data makes no sense', function (done) {
+            var session = new snmp.Session({ host: 'localhost', port: 1162 });
+            session.on('error', function () {
+                done();
+            });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) { });
         });
     });
 });
