@@ -1,0 +1,81 @@
+{
+  "name": "snmp-native",
+  "version": "1.0.2",
+  "dependencies": {
+    "underscore": {
+      "version": "1.3.3"
+    },
+    "should": {
+      "version": "0.6.3"
+    },
+    "jshint": {
+      "version": "0.6.1",
+      "dependencies": {
+        "argsparser": {
+          "version": "0.0.6"
+        },
+        "minimatch": {
+          "version": "0.0.5",
+          "dependencies": {
+            "lru-cache": {
+              "version": "1.0.6"
+            }
+          }
+        }
+      }
+    },
+    "mocha": {
+      "version": "1.0.2",
+      "dependencies": {
+        "commander": {
+          "version": "0.5.2"
+        },
+        "growl": {
+          "version": "1.5.1"
+        },
+        "jade": {
+          "version": "0.20.3",
+          "dependencies": {
+            "mkdirp": {
+              "version": "0.3.1"
+            }
+          }
+        },
+        "diff": {
+          "version": "1.0.2"
+        },
+        "debug": {
+          "version": "0.6.0"
+        }
+      }
+    },
+    "snmpjs": {
+      "version": "0.0.2",
+      "dependencies": {
+        "jison": {
+          "version": "0.3.6",
+          "dependencies": {
+            "JSONSelect": {
+              "version": "0.4.0"
+            },
+            "reflect": {
+              "version": "0.0.1"
+            },
+            "nomnom": {
+              "version": "0.4.3"
+            }
+          }
+        },
+        "asn1": {
+          "version": "0.1.11"
+        },
+        "bunyan": {
+          "version": "0.6.9"
+        },
+        "dtrace-provider": {
+          "version": "0.0.7"
+        }
+      }
+    }
+  }
+}
