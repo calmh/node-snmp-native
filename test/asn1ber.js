@@ -122,8 +122,8 @@ describe('asn1ber', function () {
             }
         });
         it('returns an oid correctly', function () {
-            var oid = [1,3,6,1,4,1,2680,1,2,7,3,2,0];
-            var correct = '06 0d 2b 06 01 04 01 94 78 01 02 07 03 02 00'.replace(/ /g, '');
+            var oid = [1,3,6,1,4,1,2680,1234567,2,7,3,2,0];
+            var correct = '06 0f 2b 06 01 04 01 94 78 cb ad 07 02 07 03 02 00'.replace(/ /g, '');
             var buf = asn1ber.encodeOid(oid);
             assert.equal(correct, buf.toString('hex'));
         });
