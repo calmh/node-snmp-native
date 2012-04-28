@@ -338,16 +338,21 @@ describe('integration', function () {
         it('should get an array of oids', function (done) {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             var oids = [ [1, 3, 6, 42, 1, 2, 3, 1, 1], [1, 3, 6, 42, 1, 2, 3, 1, 2], [1, 3, 6, 42, 1, 2, 3, 1, 3], [1, 3, 6, 42, 1, 2, 3, 1, 4], [1, 3, 6, 42, 1, 2, 3, 1, 5] ];
-            session.getAll({ oids: oids }, function (err, vbs) {
+            // We need more than 16 oids to test sending more than one packet.
+            var manyOids = [].concat(oids, oids, oids, oids);
+            assert.equal(20, manyOids.length);
+            session.getAll({ oids: manyOids }, function (err, vbs) {
                 if (err) {
                     done(err);
                 } else {
-                    vbs.length.should.equal(5);
-                    vbs[0].value.should.equal('system description');
-                    vbs[1].value.should.equal(1234567890);
-                    vbs[2].value.should.equal(1234567890);
-                    vbs[3].value.should.equal(1234567890);
-                    should.not.exist(vbs[4].value);
+                    vbs.length.should.equal(20);
+                    for (var i = 0; i < 4; i++) {
+                        vbs[5 * i + 0].value.should.equal('system description');
+                        vbs[5 * i + 1].value.should.equal(1234567890);
+                        vbs[5 * i + 2].value.should.equal(1234567890);
+                        vbs[5 * i + 3].value.should.equal(1234567890);
+                        should.not.exist(vbs[5 * i + 4].value);
+                    }
                     done();
                 }
             });
@@ -408,6 +413,13 @@ describe('integration', function () {
                 }
             });
         });
+        it('should throw an error for invalid oid', function () {
+            var session = new snmp.Session();
+            var test = function () {
+                session.getNext({ oids: [ '1.3.6.42.1.2.3.1' ] }, function (err, vbs) { });
+            };
+            test.should.throw(/Invalid OID format/);
+        });
     });
 
     describe('getNext', function () {
@@ -447,6 +459,13 @@ describe('integration', function () {
                     done();
                 }
             });
+        });
+        it('should throw an error for invalid oid', function () {
+            var session = new snmp.Session();
+            var test = function () {
+                session.getNext({ oid: '1.3.6.42.1.2.3.1' }, function (err, vbs) { });
+            };
+            test.should.throw(/Invalid OID format/);
         });
     });
 
@@ -496,6 +515,13 @@ describe('integration', function () {
                 }
             });
         });
+        it('should throw an error for invalid oid', function () {
+            var session = new snmp.Session();
+            var test = function () {
+                session.get({ oid: '1.3.6.42.1.2.3.1' }, function (err, vbs) { });
+            };
+            test.should.throw(/Invalid OID format/);
+        });
     });
 
     describe('set', function () {
@@ -526,6 +552,13 @@ describe('integration', function () {
                 session.set({ value: 5, type: 2 }, function (err, vbs) { });
             };
             test.should.throw(/Missing required option/);
+        });
+        it('should throw an error for invalid oid', function () {
+            var session = new snmp.Session();
+            var test = function () {
+                session.set({ oid: '1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) { });
+            };
+            test.should.throw(/Invalid OID format/);
         });
         it('should throw an error for missing value', function () {
             var session = new snmp.Session();
@@ -579,16 +612,6 @@ describe('integration', function () {
             // a communication problem. I would have expected something more immediate.
             var session = new snmp.Session({ family: 'udp4', host: '2001:db8::1', timeouts: [ 100 ] });
             session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) {
-                should.exist(err);
-                should.not.exist(varbinds);
-                done();
-            });
-        });
-        it('should return an error for invalid OID form', function (done) {
-            // This actually results in a timeout. That works, I guess, since it indicates
-            // a communication problem. I would have expected something more immediate.
-            var session = new snmp.Session({ family: 'udp4', host: '2001:db8::1', timeouts: [ 100 ] });
-            session.get({ oid: '1.3.6.42.1.2.3.1' }, function (err, varbinds) {
                 should.exist(err);
                 should.not.exist(varbinds);
                 done();

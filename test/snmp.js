@@ -49,6 +49,13 @@ describe('snmp', function () {
     });
 
     describe('parse()', function () {
+        it('throws a parse error for invalid packets', function (done) {
+            try {
+                snmp.parse(new Buffer('00112233445566', 'hex'));
+            } catch (err) {
+                done();
+            }
+        });
         it('returns a snmp.Packet structure', function () {
             var pkt = snmp.parse(ex1);
             assert.equal('Packet', pkt.constructor.name);
