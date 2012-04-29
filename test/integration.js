@@ -566,10 +566,11 @@ describe('integration', function () {
         });
         it('should not throw an error for integer type', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            var test = function () {
-                session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) { });
-            };
-            test.should.not.throw();
+            session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) { });
+        });
+        it('should gracefully handle an undefined callback', function () {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 });
         });
         it('should not throw an error for string oid', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });

@@ -212,3 +212,9 @@ Example:
         }
     });
 
+If you're not really interested in the outcome of the set (and if you are, why
+aren't you using scripted telnet or ssh instead to begin with?), you can call
+it without a callback:
+
+    session.set({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0], value: 42, type: 2 });
+
