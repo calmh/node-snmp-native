@@ -78,6 +78,10 @@ The following options are recognized as properties in the options object. All
 can be specified in the `Session` constructor and optionally overridden at a
 later time by setting them in the option object to a method call.
 
+For optimum performance when polling many hosts, create a session without
+specifying the `host`. Reuse this session for all hosts and specify the `host`
+on each `get`, `getAll`, etc.
+
  - *host*: The host to send the request to. An resolvable name is allowed in
    addition to IP addresses. Default: `'localhost'`.
  - *port*: The UDP port number to send the request to. Default: `161`.
