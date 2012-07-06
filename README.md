@@ -8,10 +8,8 @@
                                   \ \_\
                                    \/_/
 
-[![Build Status](https://secure.travis-ci.org/calmh/node-snmp-native.png)](http://travis-ci.org/calmh/node-snmp-native)
-
-node-snmp-native
-================
+snmp-native  [![Build Status](https://secure.travis-ci.org/calmh/node-snmp-native.png)](http://travis-ci.org/calmh/node-snmp-native)
+===========
 
 This is a native SNMP library for Node.js. The purpose is to provide enough
 functionality to perform large scale monitoring of network equipment. Current
@@ -49,7 +47,7 @@ and an [example](http://nym.se/node-snmp-native/docs/example.html) to get starte
 Installation
 ------------
 
-    npm install snmp-native
+    $ npm install snmp-native
 
 Usage
 -----
@@ -82,15 +80,15 @@ For optimum performance when polling many hosts, create a session without
 specifying the `host`. Reuse this session for all hosts and specify the `host`
 on each `get`, `getAll`, etc.
 
- - *host*: The host to send the request to. An resolvable name is allowed in
+ - `host`: The host to send the request to. An resolvable name is allowed in
    addition to IP addresses. Default: `'localhost'`.
- - *port*: The UDP port number to send the request to. Default: `161`.
- - *community*: The SNMP community name. Default: `'public'`.
- - *family*: Address family to bind to. This is only used by the `Session`
+ - `port`: The UDP port number to send the request to. Default: `161`.
+ - `community`: The SNMP community name. Default: `'public'`.
+ - `family`: Address family to bind to. This is only used by the `Session`
    constructor since that is when the bind is done. It cannot be changed or
    overridden after construction. Default: `'udp4'`. Valid values: `'udp4'` or
    `'udp6'`.
- - *timeouts*: An array of timeout values. Values are times in milliseconds,
+ - `timeouts`: An array of timeout values. Values are times in milliseconds,
    the length of the array is the total number of transmissions that will
    occur. Default: `[5000, 5000, 5000, 5000]` (four attempts, with five seconds
    between each). A backoff can be implemented by timeouts along the lines of
@@ -102,21 +100,21 @@ on each `get`, `getAll`, etc.
 All of the `get*` functions return arrays of `VarBind` as the result to the
 callback. The `VarBind` objects have the following properties:
 
- - *oid*: The OID they represent (in array form).
- - *type*: The integer type code for the returned value.
- - *value*: The value, in decoded form. This will be an integer for integer,
+ - `oid`: The OID they represent (in array form).
+ - `type`: The integer type code for the returned value.
+ - `value`: The value, in decoded form. This will be an integer for integer,
    gauge, counter and timetick types, a string for an octet string value, an
    array for array or IP number types.
- - *valueRaw*: For octet string values, this is a raw `Buffer` representing the string.
- - *valueHex*: For octet string values, this is a hex string representation of the value.
- - *sendStamp*: The timestamp (in milliseconds) when the request was transmitted.
- - *receiveStamp*: The timestamp (in milliseconds) when the response was received.
+ - `valueRaw`: For octet string values, this is a raw `Buffer` representing the string.
+ - `valueHex`: For octet string values, this is a hex string representation of the value.
+ - `sendStamp`: The timestamp (in milliseconds) when the request was transmitted.
+ - `receiveStamp`: The timestamp (in milliseconds) when the response was received.
 
 ### get(options, callback)
 
 Perform a simple GetRequest. Options (in addition to the ones defined above for `Session`):
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or
+ - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or
    `'.1.3.6.1.4.1.1.2.3.4'`. Both forms are accepted, but the string form will
    need to be parsed to an array, slightly increasing CPU usage.
  
@@ -139,7 +137,7 @@ You can also specify host, community, etc explicitly.
 
 Perform a simple GetNextRequest. Options:
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
 
 Will call the specified `callback` with an `error` object (`null` on success)
 and the varbind that was received.
@@ -159,10 +157,10 @@ will get packed into as few GetRequest packets as possible to minimize
 roundtrip delays. Gets will be issued serially (not in parallell) to avoid
 flooding hosts. Options:
 
- - *oids*: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1,
+ - `oids`: An array of OIDs to get. Example: `[[1, 3, 6, 1, 4, 1, 1, 2, 3], [1,
    3, 6, 1, 4, 1, 1, 2, 4]]` or `['.1.3.6.1.4.1.1.2.3.4',
    '.1.3.6.1.4.1.2.3.4.5']`.
- - *abortOnError*: Whether to stop or continue when an error is encountered.
+ - `abortOnError`: Whether to stop or continue when an error is encountered.
    Default: `false`.
 
 The callback will be called with an error object or a list of varbinds. If the
@@ -181,7 +179,7 @@ will be called with an error object on any failure.
 
 Perform repeated GetNextRequests to fetch all values in the specified tree. Options:
 
- - *oid*: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
 
 Will call the specified `callback` with an `error` object (`null` on success)
 and the list of varbinds that was fetched.
@@ -200,10 +198,10 @@ and the list of varbinds that was fetched.
 
 Perform a simple SetRequest. Options:
 
- - *oid*: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
+ - `oid`: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
    or `'.1.3.6.1.4.1.1.2.3.4'`.
- - *value*: The value to set. Example: `42`.
- - *type*: The type of the value. Currently only `asn1ber.T.Integer` (2) is
+ - `value`: The value to set. Example: `42`.
+ - `type`: The type of the value. Currently only `asn1ber.T.Integer` (2) is
    allowed. Example: `2`.
 
 Example:
