@@ -281,8 +281,8 @@ describe('integration', function () {
                 // The request id should be the truncated time in millis, shifted
                 // ten bits to the left.
                 req = varbinds[0].requestId >>> 10;
-                (req - now).should.be.within(-5, 0);
-                // The leftmost ten bits should be an increasing for packets
+                (now - req).should.be.within(-5, 0);
+                // The leftmost ten bits should be increasing for packets
                 // sent the same millisecond. It should be at most two.
                 req = varbinds[0].requestId & 0x3ff;
                 req.should.be.within(1, 2);
