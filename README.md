@@ -241,5 +241,5 @@ session.set({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0], value: 42, type: 2 });
 License
 =======
 
-Simplified BSD
+MIT
 
