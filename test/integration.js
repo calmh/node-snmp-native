@@ -579,6 +579,20 @@ describe('integration', function () {
             };
             test.should.not.throw();
         });
+        it('should not throw an error for value zero', function () {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            var test = function () {
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 0, type: 2 }, function (err, vbs) { });
+            };
+            test.should.not.throw();
+        });
+        it('should not throw an error for IP number value', function () {
+            var session = new snmp.Session({ host: 'localhost', port: 1161 });
+            var test = function () {
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: '172.16.32.64', type: 0x40 }, function (err, vbs) { });
+            };
+            test.should.not.throw();
+        });
         it('should throw an error for missing oid', function () {
             var session = new snmp.Session();
             var test = function () {
