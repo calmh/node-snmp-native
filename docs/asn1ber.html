@@ -1,239 +1,977 @@
-<!DOCTYPE html>  <html> <head>   <title>asn1ber.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="example.html">                 example.js               </a>                                           <a class="source" href="asn1ber.html">                 asn1ber.js               </a>                                           <a class="source" href="snmp.html">                 snmp.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               asn1ber.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>This file implements a minimal subset of Abstract Syntax Notation One (<strong>ASN.1</strong>)
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>asn1ber.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="example.html">
+                example.js
+              </a>
+            
+              
+              <a class="source" href="asn1ber.html">
+                asn1ber.js
+              </a>
+            
+              
+              <a class="source" href="snmp.html">
+                snmp.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>asn1ber.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>This file implements a minimal subset of Abstract Syntax Notation One (<strong>ASN.1</strong>)
 Basic Encoding Rules (<strong>BER</strong>), namely the parts that are necessary for sending
 and receiving SNMPv2c messages.</p>
+<p>(c) 2012 Jakob Borg, Nym Networks</p>
 
-<p>(c) 2012 Jakob Borg, Nym Networks</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>We define constants for the commonly used ASN.1 types in SNMP.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">T</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">Integer</span><span class="o">:</span> <span class="mh">0x02</span><span class="p">,</span>
-    <span class="nx">OctetString</span><span class="o">:</span> <span class="mh">0x04</span><span class="p">,</span>
-    <span class="nx">Null</span><span class="o">:</span> <span class="mh">0x05</span><span class="p">,</span>
-    <span class="nx">ObjectIdentifier</span><span class="o">:</span> <span class="mh">0x06</span><span class="p">,</span>
-    <span class="nx">Sequence</span><span class="o">:</span> <span class="mh">0x30</span><span class="p">,</span>
-    <span class="nx">IpAddress</span><span class="o">:</span> <span class="mh">0x40</span><span class="p">,</span>
-    <span class="nx">Counter</span><span class="o">:</span> <span class="mh">0x41</span><span class="p">,</span>
-    <span class="nx">Gauge</span><span class="o">:</span> <span class="mh">0x42</span><span class="p">,</span>
-    <span class="nx">TimeTicks</span><span class="o">:</span> <span class="mh">0x43</span><span class="p">,</span>
-    <span class="nx">Opaque</span><span class="o">:</span> <span class="mh">0x44</span><span class="p">,</span>
-    <span class="nx">NsapAddress</span><span class="o">:</span> <span class="mh">0x45</span><span class="p">,</span>
-    <span class="nx">Counter64</span><span class="o">:</span> <span class="mh">0x46</span><span class="p">,</span>
-    <span class="nx">NoSuchObject</span><span class="o">:</span> <span class="mh">0x80</span><span class="p">,</span>
-    <span class="nx">NoSuchInstance</span><span class="o">:</span> <span class="mh">0x81</span><span class="p">,</span>
-    <span class="nx">EndOfMibView</span><span class="o">:</span> <span class="mh">0x82</span><span class="p">,</span>
-    <span class="nx">PDUBase</span><span class="o">:</span> <span class="mh">0xA0</span>
-<span class="p">};</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="string">"use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>We define constants for the commonly used ASN.1 types in SNMP.</p>
 
-<span class="kd">var</span> <span class="nx">P</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">GetRequestPDU</span><span class="o">:</span> <span class="mh">0x00</span><span class="p">,</span>
-    <span class="nx">GetNextRequestPDU</span><span class="o">:</span> <span class="mh">0x01</span><span class="p">,</span>
-    <span class="nx">GetResponsePDU</span><span class="o">:</span> <span class="mh">0x02</span><span class="p">,</span>
-    <span class="nx">SetRequestPDU</span><span class="o">:</span> <span class="mh">0x03</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>The types are also available for consumers of the library.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">types</span> <span class="o">=</span> <span class="nx">T</span><span class="p">;</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">pduTypes</span> <span class="o">=</span> <span class="nx">P</span><span class="p">;</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">unittest</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h2>Private helper functions</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Encode a length as it should be encoded.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">lengthArray</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="p">[];</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> T = {
+    Integer: <span class="number">0x02</span>,
+    OctetString: <span class="number">0x04</span>,
+    Null: <span class="number">0x05</span>,
+    ObjectIdentifier: <span class="number">0x06</span>,
+    Sequence: <span class="number">0x30</span>,
+    IpAddress: <span class="number">0x40</span>,
+    Counter: <span class="number">0x41</span>,
+    Gauge: <span class="number">0x42</span>,
+    TimeTicks: <span class="number">0x43</span>,
+    Opaque: <span class="number">0x44</span>,
+    NsapAddress: <span class="number">0x45</span>,
+    Counter64: <span class="number">0x46</span>,
+    NoSuchObject: <span class="number">0x80</span>,
+    NoSuchInstance: <span class="number">0x81</span>,
+    EndOfMibView: <span class="number">0x82</span>,
+    PDUBase: <span class="number">0xA0</span>
+};
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&lt;=</span> <span class="mi">127</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Return a single byte if the value is 127 or less.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">return</span> <span class="p">[</span> <span class="nx">len</span> <span class="p">];</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Otherwise encode it as a MSB base-256 integer.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">while</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">len</span> <span class="o">%</span> <span class="mi">256</span><span class="p">);</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">len</span> <span class="o">/</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Add a length byte in front and set the high bit to indicate
-that this is a longer value than one byte.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">128</span> <span class="o">+</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-        <span class="nx">arr</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
-        <span class="k">return</span> <span class="nx">arr</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="keyword">var</span> P = {
+    GetRequestPDU: <span class="number">0x00</span>,
+    GetNextRequestPDU: <span class="number">0x01</span>,
+    GetResponsePDU: <span class="number">0x02</span>,
+    SetRequestPDU: <span class="number">0x03</span>
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>The types are also available for consumers of the library.</p>
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">unittest</span><span class="p">.</span><span class="nx">lengthArray</span> <span class="o">=</span> <span class="nx">lengthArray</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Return a wrapped copy of the passed <code>contents</code>, with the specified wrapper type.
-This is used for Sequence and other constructed types.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">wrapper</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">buf</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Get the encoded length of the contents</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">len</span> <span class="o">=</span> <span class="nx">lengthArray</span><span class="p">(</span><span class="nx">contents</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Set up a buffer with the type and length bytes plus a straight copy of the content.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">buf</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nx">contents</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-    <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">len</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="nx">contents</span><span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">buf</span><span class="p">;</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Get the encoded representation of a number in an OID.
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.types = T;
+exports.pduTypes = P;
+exports.unittest = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2>Private helper functions</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Encode a length as it should be encoded.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">lengthArray</span><span class="params">(len)</span> {</span>
+    <span class="keyword">var</span> arr = [];
+
+    <span class="keyword">if</span> (len &lt;= <span class="number">127</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Return a single byte if the value is 127 or less.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">return</span> [ len ];
+    } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Otherwise encode it as a MSB base-256 integer.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">while</span> (len &gt; <span class="number">0</span>) {
+            arr.push(len % <span class="number">256</span>);
+            len = parseInt(len / <span class="number">256</span>, <span class="number">10</span>);
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Add a length byte in front and set the high bit to indicate
+that this is a longer value than one byte.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        arr.push(<span class="number">128</span> + arr.length);
+        arr.reverse();
+        <span class="keyword">return</span> arr;
+    }
+}
+
+exports.unittest.lengthArray = lengthArray;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Return a wrapped copy of the passed <code>contents</code>, with the specified wrapper type.
+This is used for Sequence and other constructed types.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">wrapper</span><span class="params">(type, contents)</span> {</span>
+    <span class="keyword">var</span> buf, len, i;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Get the encoded length of the contents</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    len = lengthArray(contents.length);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Set up a buffer with the type and length bytes plus a straight copy of the content.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    buf = <span class="keyword">new</span> Buffer(<span class="number">1</span> + contents.length + len.length);
+    buf[<span class="number">0</span>] = type;
+    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; len.length + <span class="number">1</span>; i++) {
+        buf[i] = len[i - <span class="number">1</span>];
+    }
+    contents.copy(buf, len.length + <span class="number">1</span>, <span class="number">0</span>);
+    <span class="keyword">return</span> buf;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Get the encoded representation of a number in an OID.
 If the number is less than 128, pass it as it is.
 Otherwise return an array of base-128 digits, most significant first,
 with the high bit set on all octets except the last one.
 This encoding should be used for all number in an OID except the first
-two (.1.3) which are handled specially.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">oidInt</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">bytes</span> <span class="o">=</span> <span class="p">[];</span>
+two (.1.3) which are handled specially.</p>
 
-    <span class="nx">bytes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">val</span> <span class="o">%</span> <span class="mi">128</span><span class="p">);</span>
-    <span class="nx">val</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">val</span> <span class="o">/</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-    <span class="k">while</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&gt;</span> <span class="mi">127</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">bytes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">128</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">%</span> <span class="mi">128</span><span class="p">);</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">val</span> <span class="o">/</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="nx">bytes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">val</span> <span class="o">+</span> <span class="mi">128</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Encode an OID. The first two number are encoded specially
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">oidInt</span><span class="params">(val)</span> {</span>
+    <span class="keyword">var</span> bytes = [];
+
+    bytes.push(val % <span class="number">128</span>);
+    val = parseInt(val / <span class="number">128</span>, <span class="number">10</span>);
+    <span class="keyword">while</span> (val &gt; <span class="number">127</span>) {
+        bytes.push(<span class="number">128</span> + val % <span class="number">128</span>);
+        val = parseInt(val / <span class="number">128</span>, <span class="number">10</span>);
+    }
+    bytes.push(val + <span class="number">128</span>);
+    <span class="keyword">return</span> bytes.reverse();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Encode an OID. The first two number are encoded specially
 in the first octet, then the rest are encoded as one octet per number
-unless the number exceeds 127. If so, it's encoded as several base-127
-octets with the high bit set to indicate continuation.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">oidArray</span><span class="p">(</span><span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">bytes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">val</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Enforce some minimum requirements on the OID.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">oid</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Minimum OID length is two.&quot;</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">oid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">oid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;SNMP OIDs always start with .1.3.&quot;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Calculate the first byte of the encoded OID according to the 'special' rule.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">bytes</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">40</span> <span class="o">*</span> <span class="nx">oid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">oid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>For the rest of the OID, encode each number individually and add the
-resulting bytes to the buffer.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">oid</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="nx">oid</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&gt;</span> <span class="mi">127</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">bytes</span> <span class="o">=</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">oidInt</span><span class="p">(</span><span class="nx">val</span><span class="p">));</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">bytes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+unless the number exceeds 127. If so, it&#39;s encoded as several base-127
+octets with the high bit set to indicate continuation.</p>
 
-    <span class="k">return</span> <span class="nx">bytes</span><span class="p">;</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Divide an integer into base-256 bytes.
-Most significant byte first.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">intArray</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">array</span> <span class="o">=</span> <span class="p">[];</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">oidArray</span><span class="params">(oid)</span> {</span>
+    <span class="keyword">var</span> bytes, i, val;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Enforce some minimum requirements on the OID.</p>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">array</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">while</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">array</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">val</span> <span class="o">%</span> <span class="mi">256</span><span class="p">);</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">val</span> <span class="o">/</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Do not produce integers that look negative (high bit
-of first byte set).</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">array</span><span class="p">[</span><span class="nx">array</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mh">0x80</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">array</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (oid.length &lt; <span class="number">2</span>) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Minimum OID length is two."</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (oid[<span class="number">0</span>] !== <span class="number">1</span> || oid[<span class="number">1</span>] !== <span class="number">3</span>) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"SNMP OIDs always start with .1.3."</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Calculate the first byte of the encoded OID according to the &#39;special&#39; rule.</p>
 
-    <span class="k">return</span> <span class="nx">array</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <h2>Functions to encode ASN.1 from native objects</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Encode a simple integer.
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    bytes = [ <span class="number">40</span> * oid[<span class="number">0</span>] + oid[<span class="number">1</span>] ];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>For the rest of the OID, encode each number individually and add the
+resulting bytes to the buffer.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> (i = <span class="number">2</span>; i &lt; oid.length; i++) {
+        val = oid[i];
+        <span class="keyword">if</span> (val &gt; <span class="number">127</span>) {
+            bytes = bytes.concat(oidInt(val));
+        } <span class="keyword">else</span> {
+            bytes.push(val);
+        }
+    }
+
+    <span class="keyword">return</span> bytes;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Divide an integer into base-256 bytes.
+Most significant byte first.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">intArray</span><span class="params">(val)</span> {</span>
+    <span class="keyword">var</span> array = [];
+
+    <span class="keyword">if</span> (val === <span class="number">0</span>) {
+        array.push(<span class="number">0</span>);
+    } <span class="keyword">else</span> {
+        <span class="keyword">while</span> (val &gt; <span class="number">0</span>) {
+            array.push(val % <span class="number">256</span>);
+            val = parseInt(val / <span class="number">256</span>, <span class="number">10</span>);
+        }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Do not produce integers that look negative (high bit
+of first byte set).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (array[array.length - <span class="number">1</span>] &gt;= <span class="number">0x80</span>) {
+        array.push(<span class="number">0</span>);
+    }
+
+    <span class="keyword">return</span> array.reverse();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h2>Functions to encode ASN.1 from native objects</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Encode a simple integer.
 Integers are encoded as a simple base-256 byte sequence, most significant byte first,
 prefixed with a length byte. In principle we support arbitrary integer sizes, in practice
-Javascript doesn't even <strong>have</strong> integers so some precision might get lost.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">encodeInteger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">arr</span><span class="p">,</span> <span class="nx">buf</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Get the bytes that we're going to encode.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">arr</span> <span class="o">=</span> <span class="nx">intArray</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Now that we know the length, we allocate a buffer of the required size.
-We set the type and length bytes appropriately.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">buf</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-    <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Integer</span><span class="p">;</span>
-    <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Copy the bytes into the array.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-    <span class="p">}</span>
+Javascript doesn&#39;t even <strong>have</strong> integers so some precision might get lost.</p>
 
-    <span class="k">return</span> <span class="nx">buf</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Create the representation of a Null, <code>05 00</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">encodeNull</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">buf</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-    <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Null</span><span class="p">;</span>
-    <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nx">buf</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Encode a Sequence, which is a wrapper of type <code>30</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">encodeSequence</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">wrapper</span><span class="p">(</span><span class="nx">T</span><span class="p">.</span><span class="nx">Sequence</span><span class="p">,</span> <span class="nx">contents</span><span class="p">);</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Encode an OctetString, which is a wrapper of type <code>04</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">encodeOctetString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">buf</span><span class="p">,</span> <span class="nx">contents</span><span class="p">;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeInteger = <span class="function"><span class="keyword">function</span> <span class="params">(val)</span> {</span>
+    <span class="keyword">var</span> i, arr, buf;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Get the bytes that we&#39;re going to encode.</p>
 
-    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">string</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">contents</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">string</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Buffer</span><span class="p">.</span><span class="nx">isBuffer</span><span class="p">(</span><span class="nx">string</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">contents</span> <span class="o">=</span> <span class="nx">string</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Only Buffer and string types are acceptable as OctetString.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    arr = intArray(val);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Now that we know the length, we allocate a buffer of the required size.
+We set the type and length bytes appropriately.</p>
 
-    <span class="k">return</span> <span class="nx">wrapper</span><span class="p">(</span><span class="nx">T</span><span class="p">.</span><span class="nx">OctetString</span><span class="p">,</span> <span class="nx">contents</span><span class="p">);</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>Encode an ObjectId.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">encodeOid</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">oid</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">buf</span><span class="p">,</span> <span class="nx">bytes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>Get the encoded format of the OID.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">bytes</span> <span class="o">=</span> <span class="nx">oidArray</span><span class="p">(</span><span class="nx">oid</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Get the encoded format of the length</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">len</span> <span class="o">=</span> <span class="nx">lengthArray</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Fill in the buffer with type, length and OID data.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">buf</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-    <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">T</span><span class="p">.</span><span class="nx">ObjectIdentifier</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">len</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">bytes</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="nx">len</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    buf = <span class="keyword">new</span> Buffer(<span class="number">2</span> + arr.length);
+    buf[<span class="number">0</span>] = T.Integer;
+    buf[<span class="number">1</span>] = arr.length;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Copy the bytes into the array.</p>
 
-    <span class="k">return</span> <span class="nx">buf</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p>Encode an SNMP request with specified <code>contents</code>.
-The <code>type</code> code is 0 for <code>GetRequest</code>, 1 for <code>GetNextRequest</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">encodeRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">wrapper</span><span class="p">(</span><span class="nx">T</span><span class="p">.</span><span class="nx">PDUBase</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">contents</span><span class="p">);</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <h2>Functions to parse ASN.1 to native objects</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <p>Parse and return type, data length and header length.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">typeAndLength</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; arr.length; i++) {
+        buf[i + <span class="number">2</span>] = arr[i];
+    }
 
-    <span class="nx">res</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">len</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">header</span><span class="o">:</span> <span class="mi">1</span> <span class="p">};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">128</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <p>If bit 8 is zero, this byte indicates the content length (up to 127 bytes).</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">res</span><span class="p">.</span><span class="nx">len</span> <span class="o">=</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">header</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <p>If bit 8 is 1, bits 0 to 7 indicate the number of following legth bytes.
-These bytes are a simple msb base-256 integer indicating the content length.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">128</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">len</span> <span class="o">+=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">len</span> <span class="o">*=</span> <span class="mi">256</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">header</span> <span class="o">+=</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">128</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
-<span class="p">}</span>
+    <span class="keyword">return</span> buf;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Create the representation of a Null, <code>05 00</code>.</p>
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">typeAndLength</span> <span class="o">=</span> <span class="nx">typeAndLength</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>Parse a buffer containing a representation of an integer.
-Verifies the type, then multiplies in each byte as it comes.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">parseInteger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">val</span><span class="p">;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeNull = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    <span class="keyword">var</span> buf = <span class="keyword">new</span> Buffer(<span class="number">2</span>);
+    buf[<span class="number">0</span>] = T.Null;
+    buf[<span class="number">1</span>] = <span class="number">0</span>;
+    <span class="keyword">return</span> buf;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Encode a Sequence, which is a wrapper of type <code>30</code>.</p>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Integer</span> <span class="o">&amp;&amp;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Counter</span> <span class="o">&amp;&amp;</span>
-            <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Counter64</span> <span class="o">&amp;&amp;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Gauge</span> <span class="o">&amp;&amp;</span>
-            <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">TimeTicks</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer &#39;</span> <span class="o">+</span> <span class="nx">buf</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; does not appear to be an Integer&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeSequence = <span class="function"><span class="keyword">function</span> <span class="params">(contents)</span> {</span>
+    <span class="keyword">return</span> wrapper(T.Sequence, contents);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Encode an OctetString, which is a wrapper of type <code>04</code>.</p>
 
-    <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">val</span> <span class="o">*=</span> <span class="mi">256</span><span class="p">;</span>
-        <span class="nx">val</span> <span class="o">+=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">];</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeOctetString = <span class="function"><span class="keyword">function</span> <span class="params">(string)</span> {</span>
+    <span class="keyword">var</span> buf, contents;
 
-    <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <p>Parse a buffer containing a representation of an OctetString.
-Verify the type, then just grab the string out of the buffer.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">parseOctetString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">OctetString</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer does not appear to be an OctetString&#39;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <p>SNMP doesn't specify an encoding so I pick UTF-8 as the 'most standard'
-encoding. We'll see if that assumption survives contact with actual reality.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">return</span> <span class="nx">buf</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="o">+</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <p>Parse a buffer containing a representation of an ObjectIdentifier.
-Verify the type, then apply the relevent encoding rules.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">parseOid</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">oid</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+    <span class="keyword">if</span> (<span class="keyword">typeof</span> string === <span class="string">'string'</span>) {
+        contents = <span class="keyword">new</span> Buffer(string);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (Buffer.isBuffer(string)) {
+        contents = string;
+    } <span class="keyword">else</span> {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Only Buffer and string types are acceptable as OctetString.'</span>);
+    }
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">ObjectIdentifier</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer does not appear to be an ObjectIdentifier&#39;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <p>The first byte contains the first two numbers in the OID</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">oid</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mi">40</span> <span class="p">];</span></pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <p>The rest of the data is a base-128-encoded OID</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">while</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">128</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">val</span> <span class="o">+=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="mi">128</span><span class="p">;</span>
-            <span class="nx">val</span> <span class="o">*=</span> <span class="mi">128</span><span class="p">;</span>
-            <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nx">val</span> <span class="o">+=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">];</span>
-        <span class="nx">oid</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="keyword">return</span> wrapper(T.OctetString, contents);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Encode an IpAddress, which is a wrapper of type <code>40</code>.</p>
 
-    <span class="k">return</span> <span class="nx">oid</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-42">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-42">&#182;</a>               </div>               <p>Parse a buffer containing a representation of an array type.
-This is for example an IpAddress.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">parseArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">nelem</span><span class="p">,</span> <span class="nx">array</span><span class="p">;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeIpAddress = <span class="function"><span class="keyword">function</span> <span class="params">(address)</span> {</span>
+    <span class="keyword">var</span> contents, octets, value = [];
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">IpAddress</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer does not appear to be an array type.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="keyword">if</span> (<span class="keyword">typeof</span> address !== <span class="string">'string'</span> &amp;&amp; !Buffer.isBuffer(address)) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Only Buffer and string types are acceptable as OctetString.'</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>assume that the string is in dotted decimal format ipv4
+also, use toString in case a buffer was passed in.</p>
 
-    <span class="nx">nelem</span> <span class="o">=</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-    <span class="nx">array</span> <span class="o">=</span> <span class="p">[];</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    octets = address.toString().split(<span class="string">'.'</span>);
+    <span class="keyword">if</span> (octets.length !== <span class="number">4</span>) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'IP Addresses must be specified in dotted decimal format.'</span>);
+    }
+    octets.forEach(<span class="function"><span class="keyword">function</span> <span class="params">(octet)</span> {</span>
+        <span class="keyword">var</span> octetValue = parseInt(octet, <span class="number">10</span>);
+        <span class="keyword">if</span> (octet &lt; <span class="number">0</span> || octet &gt; <span class="number">255</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'IP Address octets must be between 0 and 255 inclusive.'</span> + JSON.stringify(octets));
+        }
+        value.push(octetValue);
+    });
 
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">array</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]);</span>
-    <span class="p">}</span>
+    contents = <span class="keyword">new</span> Buffer(value);
 
-    <span class="k">return</span> <span class="nx">array</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-43">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-43">&#182;</a>               </div>               <p>Parse a buffer containing a representation of an opaque type.
-This is for example an IpAddress.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">parseOpaque</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">hdr</span><span class="p">;</span>
+    <span class="keyword">return</span> wrapper(T.IpAddress, contents);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Encode an ObjectId.</p>
 
-    <span class="nx">hdr</span> <span class="o">=</span> <span class="nx">typeAndLength</span><span class="p">(</span><span class="nx">buf</span><span class="p">);</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeOid = <span class="function"><span class="keyword">function</span> <span class="params">(oid)</span> {</span>
+    <span class="keyword">var</span> buf, bytes, i, len;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Get the encoded format of the OID.</p>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">hdr</span><span class="p">.</span><span class="nx">type</span> <span class="o">!==</span> <span class="nx">T</span><span class="p">.</span><span class="nx">Opaque</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Buffer does not appear to be an opaque type.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    bytes = oidArray(oid);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Get the encoded format of the length</p>
 
-    <span class="k">return</span> <span class="s1">&#39;0x&#39;</span> <span class="o">+</span> <span class="nx">buf</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">hdr</span><span class="p">.</span><span class="nx">header</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">);</span>
-<span class="p">};</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    len = lengthArray(bytes.length);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Fill in the buffer with type, length and OID data.</p>
 
-<span class="cm">/*globals exports: false*/</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    buf = <span class="keyword">new</span> Buffer(<span class="number">1</span> + bytes.length + len.length);
+    buf[<span class="number">0</span>] = T.ObjectIdentifier;
+    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; len.length + <span class="number">1</span>; i++) {
+        buf[i] = len[i - <span class="number">1</span>];
+    }
+    <span class="keyword">for</span> (i = len.length + <span class="number">1</span>; i &lt; bytes.length + len.length + <span class="number">1</span>; i++) {
+        buf[i] = bytes[i - len.length - <span class="number">1</span>];
+    }
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+    <span class="keyword">return</span> buf;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Encode an SNMP request with specified <code>contents</code>.
+The <code>type</code> code is 0 for <code>GetRequest</code>, 1 for <code>GetNextRequest</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.encodeRequest = <span class="function"><span class="keyword">function</span> <span class="params">(type, contents)</span> {</span>
+    <span class="keyword">return</span> wrapper(T.PDUBase + type, contents);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <h2>Functions to parse ASN.1 to native objects</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Parse and return type, data length and header length.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">typeAndLength</span><span class="params">(buf)</span> {</span>
+    <span class="keyword">var</span> res, len, i;
+
+    res = { type: buf[<span class="number">0</span>], len: <span class="number">0</span>, header: <span class="number">1</span> };
+    <span class="keyword">if</span> (buf[<span class="number">1</span>] &lt; <span class="number">128</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>If bit 8 is zero, this byte indicates the content length (up to 127 bytes).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        res.len = buf[<span class="number">1</span>];
+        res.header += <span class="number">1</span>;
+    } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>If bit 8 is 1, bits 0 to 7 indicate the number of following legth bytes.
+These bytes are a simple msb base-256 integer indicating the content length.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; buf[<span class="number">1</span>] - <span class="number">128</span>; i++) {
+            res.len += buf[i + <span class="number">1</span>];
+            res.len *= <span class="number">256</span>;
+        }
+        res.header += buf[<span class="number">1</span>] - <span class="number">128</span> + <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> res;
+}
+
+exports.typeAndLength = typeAndLength;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Parse a buffer containing a representation of an integer.
+Verifies the type, then multiplies in each byte as it comes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.parseInteger = <span class="function"><span class="keyword">function</span> <span class="params">(buf)</span> {</span>
+    <span class="keyword">var</span> i, val;
+
+    <span class="keyword">if</span> (buf[<span class="number">0</span>] !== T.Integer &amp;&amp; buf[<span class="number">0</span>] !== T.Counter &amp;&amp;
+        buf[<span class="number">0</span>] !== T.Counter64 &amp;&amp; buf[<span class="number">0</span>] !== T.Gauge &amp;&amp;
+        buf[<span class="number">0</span>] !== T.TimeTicks) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Buffer '</span> + buf.toString(<span class="string">'hex'</span>) + <span class="string">' does not appear to be an Integer'</span>);
+    }
+
+    val = <span class="number">0</span>;
+    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; buf[<span class="number">1</span>]; i++) {
+        val *= <span class="number">256</span>;
+        val += buf[i + <span class="number">2</span>];
+    }
+
+    <span class="keyword">return</span> val;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Parse a buffer containing a representation of an OctetString.
+Verify the type, then just grab the string out of the buffer.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.parseOctetString = <span class="function"><span class="keyword">function</span> <span class="params">(buf)</span> {</span>
+    <span class="keyword">if</span> (buf[<span class="number">0</span>] !== T.OctetString) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Buffer does not appear to be an OctetString'</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>SNMP doesn&#39;t specify an encoding so I pick UTF-8 as the &#39;most standard&#39;
+encoding. We&#39;ll see if that assumption survives contact with actual reality.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">return</span> buf.toString(<span class="string">'utf-8'</span>, <span class="number">2</span>, <span class="number">2</span> + buf[<span class="number">1</span>]);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Parse a buffer containing a representation of an ObjectIdentifier.
+Verify the type, then apply the relevent encoding rules.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.parseOid = <span class="function"><span class="keyword">function</span> <span class="params">(buf)</span> {</span>
+    <span class="keyword">var</span> oid, val, i;
+
+    <span class="keyword">if</span> (buf[<span class="number">0</span>] !== T.ObjectIdentifier) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Buffer does not appear to be an ObjectIdentifier'</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>The first byte contains the first two numbers in the OID</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    oid = [ parseInt(buf[<span class="number">2</span>] / <span class="number">40</span>, <span class="number">10</span>), buf[<span class="number">2</span>] % <span class="number">40</span> ];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>The rest of the data is a base-128-encoded OID</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; buf[<span class="number">1</span>] - <span class="number">1</span>; i++) {
+        val = <span class="number">0</span>;
+        <span class="keyword">while</span> (buf[i + <span class="number">3</span>] &gt;= <span class="number">128</span>) {
+            val += buf[i + <span class="number">3</span>] - <span class="number">128</span>;
+            val *= <span class="number">128</span>;
+            i++;
+        }
+        val += buf[i + <span class="number">3</span>];
+        oid.push(val);
+    }
+
+    <span class="keyword">return</span> oid;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>Parse a buffer containing a representation of an array type.
+This is for example an IpAddress.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.parseArray = <span class="function"><span class="keyword">function</span> <span class="params">(buf)</span> {</span>
+    <span class="keyword">var</span> i, nelem, array;
+
+    <span class="keyword">if</span> (buf[<span class="number">0</span>] !== T.IpAddress) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Buffer does not appear to be an array type.'</span>);
+    }
+
+    nelem = buf[<span class="number">1</span>];
+    array = [];
+
+    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; buf[<span class="number">1</span>]; i++) {
+        array.push(buf[i + <span class="number">2</span>]);
+    }
+
+    <span class="keyword">return</span> array;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>Parse a buffer containing a representation of an opaque type.
+This is for example an IpAddress.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.parseOpaque = <span class="function"><span class="keyword">function</span> <span class="params">(buf)</span> {</span>
+    <span class="keyword">var</span> hdr;
+
+    hdr = typeAndLength(buf);
+
+    <span class="keyword">if</span> (hdr.type !== T.Opaque) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'Buffer does not appear to be an opaque type.'</span>);
+    }
+
+    <span class="keyword">return</span> <span class="string">'0x'</span> + buf.slice(hdr.header).toString(<span class="string">'hex'</span>);
+};
+
+<span class="comment">/*globals exports: false*/</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

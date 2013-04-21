@@ -1,70 +1,442 @@
-<!DOCTYPE html>  <html> <head>   <title>example.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="example.html">                 example.js               </a>                                           <a class="source" href="asn1ber.html">                 asn1ber.js               </a>                                           <a class="source" href="snmp.html">                 snmp.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               example.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h2>Example code for node-snmp-native.</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>This file contains examples of how to use the library.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h2>Basic setup</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>The snmp object is the main entry point to the library.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">snmp</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;snmp-native&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>We'll use the Underscore library for a few convenience functions.
-You should too. We'll also pull in the <code>util</code> library so we can print
-out object structures nicely.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;util&#39;</span><span class="p">);</span>
+<!DOCTYPE html>
 
-<span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">community</span> <span class="o">=</span> <span class="s1">&#39;public&#39;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>A session is required to communicate with an agent.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">snmp</span><span class="p">.</span><span class="nx">Session</span><span class="p">({</span> <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">community</span><span class="o">:</span> <span class="nx">community</span> <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>All OIDs are represented as integer arrays.
+<html>
+<head>
+  <title>example.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="example.html">
+                example.js
+              </a>
+            
+              
+              <a class="source" href="asn1ber.html">
+                asn1ber.js
+              </a>
+            
+              
+              <a class="source" href="snmp.html">
+                snmp.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>example.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2>Example code for node-snmp-native.</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>This file contains examples of how to use the library.</p>
+<h2>Basic setup</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>The snmp object is the main entry point to the library.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> snmp = require(<span class="string">'snmp-native'</span>);
+
+<span class="keyword">var</span> util = require(<span class="string">'util'</span>);
+
+<span class="keyword">var</span> host = <span class="string">'localhost'</span>;
+<span class="keyword">var</span> community = <span class="string">'public'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>A session is required to communicate with an agent.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> session = <span class="keyword">new</span> snmp.Session({ host: host, community: community });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>All OIDs are represented as integer arrays.
 There is no interpretation of string or MIB names.
-This here is the OID for sysDescr.0.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">oid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h2>Getting a single value</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>This is how you issue a simple get request.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">session</span><span class="p">.</span><span class="nx">get</span><span class="p">({</span> <span class="nx">oid</span><span class="o">:</span> <span class="nx">oid</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">varbinds</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">vb</span><span class="p">;</span>
+This here is the OID for sysDescr.0.</p>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>If there is an error, such as an SNMP timeout, we'll end up here.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">vb</span> <span class="o">=</span> <span class="nx">varbinds</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;The system description is &quot;&#39;</span> <span class="o">+</span> <span class="nx">vb</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>The session must be closed when you're done with it.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">session</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
-<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h2>Parsing an OID string and getting an entire tree</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Here we convert an OID from string representation to array.
-This is the base OID for the ifName tree.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">oidStr</span> <span class="o">=</span> <span class="s1">&#39;.1.3.6.1.2.1.31.1.1.1.1&#39;</span><span class="p">;</span>
-<span class="nx">oid</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">compact</span><span class="p">(</span><span class="nx">oidStr</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)),</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>You can also get an entire subtree (an SNMP walk).</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">session2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">snmp</span><span class="p">.</span><span class="nx">Session</span><span class="p">({</span> <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">community</span><span class="o">:</span> <span class="nx">community</span> <span class="p">});</span>
-<span class="nx">session2</span><span class="p">.</span><span class="nx">getSubtree</span><span class="p">({</span> <span class="nx">oid</span><span class="o">:</span> <span class="nx">oid</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">varbinds</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>If there is an error, such as an SNMP timeout, we'll end up here.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>This is the list of varbinds.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">varbinds</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">vb</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Name of interface &#39;</span> <span class="o">+</span> <span class="nx">_</span><span class="p">.</span><span class="nx">last</span><span class="p">(</span><span class="nx">vb</span><span class="p">.</span><span class="nx">oid</span><span class="p">)</span>  <span class="o">+</span> <span class="s1">&#39; is &quot;&#39;</span> <span class="o">+</span> <span class="nx">vb</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
-        <span class="p">});</span>
-    <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> oid = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2>Getting a single value</h2>
 
-    <span class="nx">session2</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
-<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>You can get all of a collection of OIDs in one go.
-The semantics is similar to getSubtree.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">session3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">snmp</span><span class="p">.</span><span class="nx">Session</span><span class="p">({</span> <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">community</span><span class="o">:</span> <span class="nx">community</span> <span class="p">});</span>
-<span class="kd">var</span> <span class="nx">oids</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]];</span>
-<span class="nx">session3</span><span class="p">.</span><span class="nx">getAll</span><span class="p">({</span> <span class="nx">oids</span><span class="o">:</span> <span class="nx">oids</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">varbinds</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">varbinds</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">vb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">vb</span><span class="p">.</span><span class="nx">oid</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nx">vb</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
-    <span class="p">});</span>
-    <span class="nx">session3</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
-<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>You can also create a destination-less "session" to use on multiple
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>This is how you issue a simple get request.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>session.get({ oid: oid }, <span class="function"><span class="keyword">function</span> <span class="params">(err, varbinds)</span> {</span>
+    <span class="keyword">var</span> vb;
+
+    <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>If there is an error, such as an SNMP timeout, we&#39;ll end up here.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        console.log(err);
+    } <span class="keyword">else</span> {
+        vb = varbinds[<span class="number">0</span>];
+        console.log(<span class="string">'The system description is "'</span> + vb.value + <span class="string">'"'</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>The session must be closed when you&#39;re done with it.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    session.close();
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h2>Parsing an OID string and getting an entire tree</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Here we convert an OID from string representation to array.
+This is the base OID for the ifName tree.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> oidStr = <span class="string">'.1.3.6.1.2.1.31.1.1.1.1'</span>;
+oid = oidStr
+    .split(<span class="string">'.'</span>)
+    .filter(<span class="function"><span class="keyword">function</span> <span class="params">(s)</span> {</span> <span class="keyword">return</span> s.length &gt; <span class="number">0</span>; })
+    .map(<span class="function"><span class="keyword">function</span> <span class="params">(s)</span> {</span> <span class="keyword">return</span> parseInt(s, <span class="number">10</span>); });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>You can also get an entire subtree (an SNMP walk).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> session2 = <span class="keyword">new</span> snmp.Session({ host: host, community: community });
+session2.getSubtree({ oid: oid }, <span class="function"><span class="keyword">function</span> <span class="params">(err, varbinds)</span> {</span>
+    <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>If there is an error, such as an SNMP timeout, we&#39;ll end up here.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        console.log(err);
+    } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>This is the list of varbinds.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        varbinds.forEach(<span class="function"><span class="keyword">function</span> <span class="params">(vb)</span> {</span>
+            console.log(<span class="string">'Name of interface '</span> + vb.oid[vb.oid.length - <span class="number">1</span>]  + <span class="string">' is "'</span> + vb.value + <span class="string">'"'</span>);
+        });
+    }
+
+    session2.close();
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>You can get all of a collection of OIDs in one go.
+The semantics is similar to getSubtree.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> session3 = <span class="keyword">new</span> snmp.Session({ host: host, community: community });
+<span class="keyword">var</span> oids = [[<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>], [<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>]];
+session3.getAll({ oids: oids }, <span class="function"><span class="keyword">function</span> <span class="params">(err, varbinds)</span> {</span>
+    varbinds.forEach(<span class="function"><span class="keyword">function</span> <span class="params">(vb)</span> {</span>
+        console.log(vb.oid + <span class="string">' = '</span> + vb.value);
+    });
+    session3.close();
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>You can also create a destination-less &quot;session&quot; to use on multiple
 hosts. This is useful for conserving file descriptors when talking
 to a large number of hosts. This example scans the 192.168.1.0/24
-network for SNMP responders.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">session4</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">snmp</span><span class="p">.</span><span class="nx">Session</span><span class="p">({</span> <span class="nx">community</span><span class="o">:</span> <span class="nx">community</span> <span class="p">});</span> <span class="c1">// New session without host parameter. We set community to avoid repeating it later.</span>
-<span class="kd">var</span> <span class="nx">oid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span> <span class="c1">// sysDescr.0</span>
-<span class="kd">var</span> <span class="nx">cnt</span> <span class="o">=</span> <span class="mi">254</span><span class="p">;</span> <span class="c1">// Expected number of callbacks.</span>
-<span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">255</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="cm">/*jshint loopfunc:true */</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>We need a function to get a closure over i.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">session4</span><span class="p">.</span><span class="nx">get</span><span class="p">({</span> <span class="nx">oid</span><span class="o">:</span> <span class="nx">oid</span><span class="p">,</span> <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">vbs</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Probably a Timeout.</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Error for &#39;</span> <span class="o">+</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Print the returned value (sysDescr).</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="kd">var</span> <span class="nx">vb</span> <span class="o">=</span> <span class="nx">vbs</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">vb</span><span class="p">.</span><span class="nx">oid</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nx">vb</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
-            <span class="p">}</span>
+network for SNMP responders.</p>
 
-            <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="nx">cnt</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>All requests have returned, time to close the session and exit.</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="nx">session4</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
-    <span class="p">}(</span><span class="s1">&#39;192.168.1.&#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">));</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <h2>Example output</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>The expected output is something along these lines.
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> session4 = <span class="keyword">new</span> snmp.Session({ community: community }); <span class="comment">// New session without host parameter. We set community to avoid repeating it later.</span>
+<span class="keyword">var</span> oid = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>]; <span class="comment">// sysDescr.0</span>
+<span class="keyword">var</span> cnt = <span class="number">254</span>; <span class="comment">// Expected number of callbacks.</span>
+<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="number">255</span>; i++) {
+    <span class="comment">/*jshint loopfunc:true */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>We need a function to get a closure over i.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    (<span class="function"><span class="keyword">function</span> <span class="params">(host)</span> {</span>
+        session4.get({ oid: oid, host: host }, <span class="function"><span class="keyword">function</span> <span class="params">(err, vbs)</span> {</span>
+            <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Probably a Timeout.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                console.log(<span class="string">'Error for '</span> + host + <span class="string">': '</span> + err);
+            } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Print the returned value (sysDescr).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="keyword">var</span> vb = vbs[<span class="number">0</span>];
+                console.log(host + <span class="string">': '</span> + vb.oid + <span class="string">' = '</span> + vb.value);
+            }
+
+            <span class="keyword">if</span> (--cnt === <span class="number">0</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>All requests have returned, time to close the session and exit.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                session4.close();
+            }
+        });
+    }(<span class="string">'192.168.1.'</span> + i));
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h2>Example output</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>The expected output is something along these lines.
 Note that the asynchronicity results in the responses
 being printed in a different order that what you might
-guess from the above code.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="cm">/*</span>
-<span class="cm">1,3,6,1,2,1,1,1,0 = Solaris anto.nym.se 11.0 physical</span>
-<span class="cm">1,3,6,1,2,1,1,2,0 = 1,3,6,1,4,1,8072,3,2,3</span>
-<span class="cm">The system description is &quot;Solaris anto.nym.se 11.0 physical&quot;</span>
-<span class="cm">Name of interface 1 is &quot;lo0&quot;</span>
-<span class="cm">Name of interface 2 is &quot;e1000g0&quot;</span>
-<span class="cm">Name of interface 3 is &quot;vboxnet0&quot;</span>
-<span class="cm">Name of interface 4 is &quot;e1000g1&quot;</span>
-<span class="cm">Name of interface 5 is &quot;he0&quot;</span>
-<span class="cm">Name of interface 6 is &quot;nym0&quot;</span>
-<span class="cm">&lt;... lots of timeouts for the scan stuff ...&gt;</span>
-<span class="cm">*/</span>
+guess from the above code.</p>
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="comment">/*
+1,3,6,1,2,1,1,1,0 = Solaris anto.nym.se 11.0 physical
+1,3,6,1,2,1,1,2,0 = 1,3,6,1,4,1,8072,3,2,3
+The system description is "Solaris anto.nym.se 11.0 physical"
+Name of interface 1 is "lo0"
+Name of interface 2 is "e1000g0"
+Name of interface 3 is "vboxnet0"
+Name of interface 4 is "e1000g1"
+Name of interface 5 is "he0"
+Name of interface 6 is "nym0"
+&lt;... lots of timeouts for the scan stuff ...&gt;
+*/</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
