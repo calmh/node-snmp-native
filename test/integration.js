@@ -1,7 +1,6 @@
 /*globals it:false, describe:false before:false after:false beforeEach:false
  */
 
-var _ = require('underscore');
 var assert = require('assert');
 var dgram = require('dgram');
 var should = require('should');
@@ -11,33 +10,40 @@ var snmpsrv = require('snmpjs');
 var agent = snmpsrv.createAgent();
 
 var data = { '1.3.6.42.1.2.3': // No leading dot!
-    {
-        '1': {
-            '1': { type: 'OctetString', value: 'system description' },
-            '2': { type: 'Counter64', value: 1234567890 },
-            '3': { type: 'Integer', value: 1234567890 },
-            '4': { type: 'TimeTicks', value: 1234567890 },
-            '5': { type: 'Null', value: null },
-            '6': { type: 'OctetString', value: new Buffer('001122334455', 'hex') },
-            '7': { type: 'Counter32', value: 4294967295 },
-            '8': { type: 'Counter64', value: { lo: 0xffffffff, hi: 0xffffffff }}, // As close to 2^64-1 as Javascript can get...
-        }
-    },
+{
+    '1': {
+        '1': { type: 'OctetString', value: 'system description' },
+        '2': { type: 'Counter64', value: 1234567890 },
+        '3': { type: 'Integer', value: 1234567890 },
+        '4': { type: 'TimeTicks', value: 1234567890 },
+        '5': { type: 'Null', value: null },
+        '6': { type: 'OctetString', value: new Buffer('001122334455', 'hex') },
+        '7': { type: 'Counter32', value: 4294967295 },
+        '8': { type: 'Counter64', value: { lo: 0xffffffff, hi: 0xffffffff }}, // As close to 2^64-1 as Javascript can get...
+    }
+},
     '1.3.6.42.1.2.4': {
         '1': {
-            '1': { type: 'Opaque', value: new Buffer('11223344','hex') }
+            '1': { type: 'Opaque', value: new Buffer('11223344', 'hex') }
         }
     }
 };
 
 function setupResponder(agent, data) {
-    _.each(data, function (responses, oid) {
-        var columns = _.map(_.keys(responses), function (x) { return parseInt(x, 10); });
+    Object.keys(data).forEach(function (oid) {
+        var responses = data[oid];
+        var columns = Object.keys(responses).map(function (x) {
+            return parseInt(x, 10);
+        });
         var handler = function (prq) {
             var lastPartOfOid, parts, col, inst, ival, val, vb, nextOid;
 
             lastPartOfOid = prq.oid.replace(oid, '').replace(/^\./, '');
-            parts = _.map(_.compact(lastPartOfOid.split('.')), function (x) { return parseInt(x, 10); });
+            parts = lastPartOfOid.split('.').filter(function (s) {
+                return s.length > 0;
+            }).map(function (x) {
+                return parseInt(x, 10);
+            });
 
             if (prq.op === snmpsrv.pdu.GetRequest) {
                 col = parts[0].toString();
@@ -52,10 +58,10 @@ function setupResponder(agent, data) {
             } else if (prq.op === snmpsrv.pdu.GetNextRequest) {
                 if (parts.length === 0 || parts.length > 2) {
                     col = columns[0];
-                    inst = _.keys(responses[col])[0];
+                    inst = Object.keys(responses[col])[0];
                 } else if (parts.length === 1) {
                     col = parts[0].toString();
-                    inst = _.keys(responses[col])[0];
+                    inst = Object.keys(responses[col])[0];
                 } else if (parts.length === 2) {
                     col = parts[0].toString();
                     inst = (parts[1] + 1).toString();
@@ -64,7 +70,7 @@ function setupResponder(agent, data) {
                         if (!responses[col]) {
                             return prq.done();
                         }
-                        inst = _.keys(responses[col])[0];
+                        inst = Object.keys(responses[col])[0];
                     }
                 }
                 if (!col || !inst) {
@@ -106,7 +112,7 @@ agent.request({ oid: '.1.3.6.12.1.2.4', columns: [ 1 ], handler: function (prq) 
 // Create a fake server that reponds with nonsense.
 
 var server = dgram.createSocket('udp4');
-server.on('message', function(msg, rinfo) {
+server.on('message', function (msg, rinfo) {
     server.send(new Buffer(100), 0, 100, rinfo.port, rinfo.address);
 });
 server.bind(1162);
@@ -374,7 +380,13 @@ describe('integration', function () {
     describe('getAll', function () {
         it('should get an array of oids', function (done) {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            var oids = [ [1, 3, 6, 42, 1, 2, 3, 1, 1], [1, 3, 6, 42, 1, 2, 3, 1, 2], [1, 3, 6, 42, 1, 2, 3, 1, 3], [1, 3, 6, 42, 1, 2, 3, 1, 4], [1, 3, 6, 42, 1, 2, 3, 1, 5] ];
+            var oids = [
+                [1, 3, 6, 42, 1, 2, 3, 1, 1],
+                [1, 3, 6, 42, 1, 2, 3, 1, 2],
+                [1, 3, 6, 42, 1, 2, 3, 1, 3],
+                [1, 3, 6, 42, 1, 2, 3, 1, 4],
+                [1, 3, 6, 42, 1, 2, 3, 1, 5]
+            ];
             // We need more than 16 oids to test sending more than one packet.
             var manyOids = [].concat(oids, oids, oids, oids);
             assert.equal(20, manyOids.length);
@@ -413,8 +425,14 @@ describe('integration', function () {
         });
         it('should get an array of oids from specific host and community', function (done) {
             var session = new snmp.Session();
-            var oids = [ [1, 3, 6, 42, 1, 2, 3, 1, 1], [1, 3, 6, 42, 1, 2, 3, 1, 2], [1, 3, 6, 42, 1, 2, 3, 1, 3], [1, 3, 6, 42, 1, 2, 3, 1, 4], [1, 3, 6, 42, 1, 2, 3, 1, 5] ];
-            session.getAll({ oids: oids, host: 'localhost', community: 'any', port: 1161 }, function (err, vbs) {
+            var oids = [
+                [1, 3, 6, 42, 1, 2, 3, 1, 1],
+                [1, 3, 6, 42, 1, 2, 3, 1, 2],
+                [1, 3, 6, 42, 1, 2, 3, 1, 3],
+                [1, 3, 6, 42, 1, 2, 3, 1, 4],
+                [1, 3, 6, 42, 1, 2, 3, 1, 5]
+            ];
+            session.getAll({ oids: oids, host: 'localhost', community: 'any', port: 1161 }, function (err, vbs) {
                 if (err) {
                     done(err);
                 } else {
@@ -453,7 +471,8 @@ describe('integration', function () {
         it('should throw an error for invalid oid', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.getNext({ oids: [ '1.3.6.42.1.2.3.1' ] }, function (err, vbs) { });
+                session.getNext({ oids: [ '1.3.6.42.1.2.3.1' ] }, function (err, vbs) {
+                });
             };
             test.should.throw(/Invalid OID format/);
         });
@@ -500,7 +519,8 @@ describe('integration', function () {
         it('should throw an error for invalid oid', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.getNext({ oid: '1.3.6.42.1.2.3.1' }, function (err, vbs) { });
+                session.getNext({ oid: '1.3.6.42.1.2.3.1' }, function (err, vbs) {
+                });
             };
             test.should.throw(/Invalid OID format/);
         });
@@ -550,7 +570,8 @@ describe('integration', function () {
         it('should throw an error for invalid oid', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.get({ oid: '1.3.6.42.1.2.3.1' }, function (err, vbs) { });
+                session.get({ oid: '1.3.6.42.1.2.3.1' }, function (err, vbs) {
+                });
             };
             test.should.throw(/Invalid OID format/);
         });
@@ -560,13 +581,15 @@ describe('integration', function () {
         it('should throw an error for unknown value types', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             var test = function () {
-                session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 4 }, function (err, vbs) { });
+                session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 4 }, function (err, vbs) {
+                });
             };
             test.should.throw();
         });
         it('should not throw an error for integer type', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
-            session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) { });
+            session.set({ oid: [1, 3, 6, 42, 1, 2, 3, 1], value: 5, type: 2 }, function (err, vbs) {
+            });
         });
         it('should gracefully handle an undefined callback', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
@@ -575,49 +598,56 @@ describe('integration', function () {
         it('should not throw an error for string oid', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             var test = function () {
-                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) { });
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) {
+                });
             };
             test.should.not.throw();
         });
         it('should not throw an error for value zero', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             var test = function () {
-                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 0, type: 2 }, function (err, vbs) { });
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 0, type: 2 }, function (err, vbs) {
+                });
             };
             test.should.not.throw();
         });
         it('should not throw an error for IP number value', function () {
             var session = new snmp.Session({ host: 'localhost', port: 1161 });
             var test = function () {
-                session.set({ oid: '.1.3.6.42.1.2.3.1', value: '172.16.32.64', type: 0x40 }, function (err, vbs) { });
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: '172.16.32.64', type: 0x40 }, function (err, vbs) {
+                });
             };
             test.should.not.throw();
         });
         it('should throw an error for missing oid', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.set({ value: 5, type: 2 }, function (err, vbs) { });
+                session.set({ value: 5, type: 2 }, function (err, vbs) {
+                });
             };
             test.should.throw(/Missing required option/);
         });
         it('should throw an error for invalid oid', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.set({ oid: '1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) { });
+                session.set({ oid: '1.3.6.42.1.2.3.1', value: 5, type: 2 }, function (err, vbs) {
+                });
             };
             test.should.throw(/Invalid OID format/);
         });
         it('should throw an error for missing value', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.set({ oid: '.1.3.6.42.1.2.3.1', type: 2 }, function (err, vbs) { });
+                session.set({ oid: '.1.3.6.42.1.2.3.1', type: 2 }, function (err, vbs) {
+                });
             };
             test.should.throw(/Missing required option/);
         });
         it('should throw an error for missing type', function () {
             var session = new snmp.Session();
             var test = function () {
-                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 42 }, function (err, vbs) { });
+                session.set({ oid: '.1.3.6.42.1.2.3.1', value: 42 }, function (err, vbs) {
+                });
             };
             test.should.throw(/Missing required option/);
         });
@@ -669,7 +699,8 @@ describe('integration', function () {
             session.on('error', function () {
                 done();
             });
-            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) { });
+            session.get({ oid: [1, 3, 6, 42, 1, 2, 3, 1] }, function (err, varbinds) {
+            });
         });
     });
 });

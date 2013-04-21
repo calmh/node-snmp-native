@@ -9,10 +9,6 @@
 // The snmp object is the main entry point to the library.
 var snmp = require('snmp-native');
 
-// We'll use the Underscore library for a few convenience functions.
-// You should too. We'll also pull in the `util` library so we can print
-// out object structures nicely.
-var _ = require('underscore');
 var util = require('util');
 
 var host = 'localhost';
@@ -52,7 +48,10 @@ session.get({ oid: oid }, function (err, varbinds) {
 // This is the base OID for the ifName tree.
 
 var oidStr = '.1.3.6.1.2.1.31.1.1.1.1';
-oid = _.map(_.compact(oidStr.split('.')), function (x) { return parseInt(x, 10); });
+oid = oidStr
+    .split('.')
+    .filter(function (s) { return s.length > 0; })
+    .map(function (s) { return parseInt(s, 10); });
 
 // You can also get an entire subtree (an SNMP walk).
 
@@ -63,8 +62,8 @@ session2.getSubtree({ oid: oid }, function (err, varbinds) {
         console.log(err);
     } else {
         // This is the list of varbinds.
-        _.each(varbinds, function (vb) {
-            console.log('Name of interface ' + _.last(vb.oid)  + ' is "' + vb.value + '"');
+        varbinds.forEach(function (vb) {
+            console.log('Name of interface ' + vb.oid[vb.oid.length - 1]  + ' is "' + vb.value + '"');
         });
     }
 
@@ -77,7 +76,7 @@ session2.getSubtree({ oid: oid }, function (err, varbinds) {
 var session3 = new snmp.Session({ host: host, community: community });
 var oids = [[1, 3, 6, 1, 2, 1, 1, 1, 0], [1, 3, 6, 1, 2, 1, 1, 2, 0]];
 session3.getAll({ oids: oids }, function (err, varbinds) {
-    _.each(varbinds, function (vb) {
+    varbinds.forEach(function (vb) {
         console.log(vb.oid + ' = ' + vb.value);
     });
     session3.close();

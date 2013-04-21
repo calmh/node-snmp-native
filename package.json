@@ -19,7 +19,6 @@
     "cov": "jscoverage lib lib-cov && EXPRESS_COV=1 NODE_PATH=lib-cov mocha -R html-cov > docs/coverage.html"
   },
   "dependencies": {
-    "underscore": "1.3.x"
   },
   "devDependencies": {
     "jshint": "*",
