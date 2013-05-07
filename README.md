@@ -215,8 +215,9 @@ Perform a simple SetRequest. Options:
  - `oid`: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
    or `'.1.3.6.1.4.1.1.2.3.4'`.
  - `value`: The value to set. Example: `42`.
- - `type`: The type of the value. Currently only `asn1ber.T.Integer` (2) is
-   allowed. Example: `2`.
+ - `type`: The type of the value. Currently supports `asn1ber.T.Integer` (2), `asn1ber.T.Gauge` (66), 
+   `asn1ber.T.IpAddress` (64), `asn1ber.T.OctetString` (4) and `asn1ber.T.Null` (5).
+   Example: `2`.
 
 Example:
 
