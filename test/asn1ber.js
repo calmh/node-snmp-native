@@ -46,7 +46,7 @@ describe('asn1ber', function () {
         it('returns one byte for one', function () {
             var buf = asn1ber.encodeGauge(1);
             assert.equal(3, buf.length);
-            assert.equal(0x42, buf[0]); // Integer
+            assert.equal(0x42, buf[0]); // Gauge
             assert.equal(1, buf[1]); // Length
             assert.equal(1, buf[2]); // Value
         });
@@ -63,7 +63,7 @@ describe('asn1ber', function () {
         it('returns correctly for larger integer', function () {
             var buf = asn1ber.encodeGauge(1234567890);
             assert.equal(6, buf.length);
-            assert.equal(0x42, buf[0]); // Integer
+            assert.equal(0x42, buf[0]); // Gauge
             assert.equal(4, buf[1]); // Length
             assert.equal(73, buf[2]); // Value
             assert.equal(150, buf[3]); // Value
