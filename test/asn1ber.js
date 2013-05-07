@@ -37,6 +37,41 @@ describe('asn1ber', function () {
         });
     });
 
+    describe('encodeGauge()', function () {
+        it('returns one byte for zero', function () {
+            var correct = '420100';
+            var buf = asn1ber.encodeGauge(0);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('returns one byte for one', function () {
+            var buf = asn1ber.encodeGauge(1);
+            assert.equal(3, buf.length);
+            assert.equal(0x42, buf[0]); // Integer
+            assert.equal(1, buf[1]); // Length
+            assert.equal(1, buf[2]); // Value
+        });
+        it('does not return first byte and first bit of second byte all ones', function () {
+            var correct = '420300ff94';
+            var buf = asn1ber.encodeGauge(0xff94);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('does not return a negative-looking integer', function () {
+            var correct = '42020088';
+            var buf = asn1ber.encodeGauge(0x88);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('returns correctly for larger integer', function () {
+            var buf = asn1ber.encodeGauge(1234567890);
+            assert.equal(6, buf.length);
+            assert.equal(0x42, buf[0]); // Integer
+            assert.equal(4, buf[1]); // Length
+            assert.equal(73, buf[2]); // Value
+            assert.equal(150, buf[3]); // Value
+            assert.equal(2, buf[4]); // Value
+            assert.equal(210, buf[5]); // Value
+        });
+    });
+
     describe('encodeNull()', function () {
         it('returns the null representation', function () {
             var buf = asn1ber.encodeNull();
