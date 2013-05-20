@@ -35,6 +35,12 @@ describe('asn1ber', function () {
             assert.equal(2, buf[4]); // Value
             assert.equal(210, buf[5]); // Value
         });
+        it('encodes a negative integer', function () {
+            assert.equal('0201fe', asn1ber.encodeInteger(-2).toString('hex'));
+            assert.equal('0202fdda', asn1ber.encodeInteger(-550).toString('hex'));
+            assert.equal('0203ed2979', asn1ber.encodeInteger(-1234567).toString('hex'));
+            assert.equal('0204f8a432eb', asn1ber.encodeInteger(-123456789).toString('hex'));
+        });
     });
 
     describe('encodeGauge()', function () {
@@ -98,7 +104,7 @@ describe('asn1ber', function () {
             var buf = asn1ber.encodeSequence(new Buffer(1024));
             assert.equal(1024 + 1 + 3, buf.length);
             assert.equal(0x30, buf[0]); // Sequence
-            assert.equal(128+2, buf[1]); // Length
+            assert.equal(128 + 2, buf[1]); // Length
             assert.equal(0x04, buf[2]); // Length
             assert.equal(0x00, buf[3]); // Length
         });
@@ -114,7 +120,7 @@ describe('asn1ber', function () {
             assert.equal(0x30, buf[0]); // Sequence
             assert.equal(10, buf[1]); // Length
             for (i = 0; i < 10; i++) {
-                assert.equal(i, buf[i+2]);
+                assert.equal(i, buf[i + 2]);
             }
         });
     });
@@ -134,7 +140,7 @@ describe('asn1ber', function () {
             assert.equal(4, buf[0]); // OctetString
             assert.equal(str.length, buf[1]); // Length
             for (i = 0; i < str.length; i++) {
-                assert.equal(str.charCodeAt(i), buf[i+2]);
+                assert.equal(str.charCodeAt(i), buf[i + 2]);
             }
         });
         it('returns a simple buffer correctly', function () {
@@ -145,7 +151,7 @@ describe('asn1ber', function () {
             assert.equal(4, buf[0]); // OctetString
             assert.equal(orig.length, buf[1]); // Length
             for (i = 0; i < orig.length; i++) {
-                assert.equal(orig[i], buf[i+2]);
+                assert.equal(orig[i], buf[i + 2]);
             }
         });
         it('throws an exception for unknown source types', function (done) {
@@ -175,7 +181,7 @@ describe('asn1ber', function () {
             }
         });
         it('returns an oid correctly', function () {
-            var oid = [1,3,6,1,4,1,2680,1234567,2,7,3,2,0];
+            var oid = [1, 3, 6, 1, 4, 1, 2680, 1234567, 2, 7, 3, 2, 0];
             var correct = '06 0f 2b 06 01 04 01 94 78 cb ad 07 02 07 03 02 00'.replace(/ /g, '');
             var buf = asn1ber.encodeOid(oid);
             assert.equal(correct, buf.toString('hex'));
@@ -198,7 +204,7 @@ describe('asn1ber', function () {
                 asn1ber.parseInteger(buf);
             } catch (err) {
                 done();
-            };
+            }
         });
         it('returns zero for an encoded zero', function () {
             var buf = new Buffer('020100', 'hex');
@@ -215,6 +221,12 @@ describe('asn1ber', function () {
             var int = asn1ber.parseInteger(buf);
             assert.equal(1234567890, int);
         });
+        it('correctly parses a negative integer', function () {
+            assert.equal(-2, asn1ber.parseInteger(new Buffer('0201fe', 'hex')));
+            assert.equal(-550, asn1ber.parseInteger(new Buffer('0202fdda', 'hex')));
+            assert.equal(-1234567, asn1ber.parseInteger(new Buffer('0203ed2979', 'hex')));
+            assert.equal(-123456789, asn1ber.parseInteger(new Buffer('0204f8a432eb', 'hex')))
+        });
     });
 
     describe('parseOctetString()', function () {
@@ -224,7 +236,7 @@ describe('asn1ber', function () {
                 asn1ber.parseOctetString(buf);
             } catch (err) {
                 done();
-            };
+            }
         });
         it('returns an empty string', function () {
             var buf = new Buffer('0400', 'hex');
@@ -245,7 +257,7 @@ describe('asn1ber', function () {
                 asn1ber.parseOid(buf);
             } catch (err) {
                 done();
-            };
+            }
         });
         it('returns the shortest possible oid', function () {
             var buf = new Buffer('06012b', 'hex');
@@ -253,13 +265,13 @@ describe('asn1ber', function () {
             assert.deepEqual([1, 3], oid);
         });
         it('correctly parses a random oid', function () {
-            var correct = [1,3,6,1,4,1,2680,1,2,7,3,2,0];
+            var correct = [1, 3, 6, 1, 4, 1, 2680, 1, 2, 7, 3, 2, 0];
             var buf = new Buffer('06 0d 2b 06 01 04 01 94 78 01 02 07 03 02 00'.replace(/ /g, ''), 'hex');
             var oid = asn1ber.parseOid(buf);
             assert.deepEqual(correct, oid);
         });
         it('correctly parses a long oid with a large component', function () {
-            var correct = [1,3,6,1,2,1,7,7,1,8,2,16,32,1,4,112,0,39,4,214,0,0,0,0,0,0,0,2,123,0,0,0,4179634304];
+            var correct = [1, 3, 6, 1, 2, 1, 7, 7, 1, 8, 2, 16, 32, 1, 4, 112, 0, 39, 4, 214, 0, 0, 0, 0, 0, 0, 0, 2, 123, 0, 0, 0, 4179634304];
             var buf = new Buffer('06 252b 0601 0201 0707 0108 0210 2001 0470 0027 0481 5600 0000 0000 0000 027b 0000 008f c980 d100 0500'.replace(/ /g, ''), 'hex');
             var oid = asn1ber.parseOid(buf);
             assert.deepEqual(correct, oid);
@@ -273,7 +285,7 @@ describe('asn1ber', function () {
                 asn1ber.parseArray(buf);
             } catch (err) {
                 done();
-            };
+            }
         });
         it('correctly parses a random array', function () {
             var correct = [0x30, 0x40, 0x16, 0x32];
@@ -290,7 +302,7 @@ describe('asn1ber', function () {
                 asn1ber.parseOpaque(buf);
             } catch (err) {
                 done();
-            };
+            }
         });
         it('return the hex representation of an opaque value', function () {
             var correct = '0x9f78043e920000';
@@ -307,8 +319,8 @@ describe('asn1ber', function () {
             assert.deepEqual([ 127 ], asn1ber.unittest.lengthArray(127));
         });
         it('returns the length as an encoded integer if greater than 127', function () {
-            assert.deepEqual([ 128+1, 128 ], asn1ber.unittest.lengthArray(128));
-            assert.deepEqual([ 128+2, 0x04, 0x01 ], asn1ber.unittest.lengthArray(1025));
+            assert.deepEqual([ 128 + 1, 128 ], asn1ber.unittest.lengthArray(128));
+            assert.deepEqual([ 128 + 2, 0x04, 0x01 ], asn1ber.unittest.lengthArray(1025));
         });
     });
 });
