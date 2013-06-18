@@ -126,11 +126,11 @@ Will call the specified `callback` with an `error` object (`null` on success)
 and the varbind that was received.
 
 ```javascript
-session.get({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbind) {
+session.get({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbinds) {
     if (error) {
         console.log('Fail :(');
     } else {
-        console.log(varbind.oid + ' = ' + varbind.value + ' (' + varbind.type + ')');
+        console.log(varbinds[0].oid + ' = ' + varbinds[0].value + ' (' + varbinds[0].type + ')');
     }
 });
 ```
@@ -151,11 +151,11 @@ Will call the specified `callback` with an `error` object (`null` on success)
 and the varbind that was received.
 
 ```javascript
-session.getNext({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbind) {
+session.getNext({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0] }, function (error, varbinds) {
     if (error) {
         console.log('Fail :(');
     } else {
-        console.log(varbind.oid + ' = ' + varbind.value + ' (' + varbind.type + ')');
+        console.log(varbinds[0].oid + ' = ' + varbinds[0].value + ' (' + varbinds[0].type + ')');
     }
 });
 ```
