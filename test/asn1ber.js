@@ -248,6 +248,20 @@ describe('asn1ber', function () {
             var str = asn1ber.parseOctetString(buf);
             assert.equal('Solaris', str);
         });
+        it('correctly parses a long string', function () {
+            var buf = new Buffer('0481cf302d3031323334353637383920312d3031323334353637383920322d3031323334353637383920332d3031323334353637383920342d3031323334353637383920352d3031323334353637383920362d3031323334353637383920372d3031323334353637383920382d3031323334353637383920392d3031323334353637383920412d3031323334353637383920422d3031323334353637383920432d3031323334353637383920442d3031323334353637383920452d3031323334353637383920462d30313233343536373839', 'hex');
+            var str = asn1ber.parseOctetString(buf);
+            assert.equal('0-0123456789 1-0123456789 2-0123456789 3-0123456789 4-0123456789 5-0123456789 6-0123456789 7-0123456789 8-0123456789 9-0123456789 A-0123456789 B-0123456789 C-0123456789 D-0123456789 E-0123456789 F-0123456789', str);
+
+            var veryLongString = "";
+            for (var i = 0; i < 512; i++) {
+                veryLongString = veryLongString + "foo"+i;
+            }
+            buf = asn1ber.encodeOctetString(veryLongString);
+            str = asn1ber.parseOctetString(buf);
+            assert.equal(veryLongString,str);
+        });
+
     });
 
     describe('parseOid()', function () {
