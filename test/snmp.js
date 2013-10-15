@@ -18,8 +18,10 @@ var ex6 = new Buffer('302e 0201 0104 0770 7269 7661 7465 a220 0204 72eb 6a85 020
 var ex7 = new Buffer('3081 ab02 0101 0407 7072 6976 6174 65a2 819c 0204 5d7f aeee 0201 0002 0100 3081 8d30 818a 0608 2b06 0102 0101 0100 047e 4461 7277 696e 206a 626f 7267 2d6d 6270 2031 312e 322e 3020 4461 7277 696e 204b 6572 6e65 6c20 5665 7273 696f 6e20 3131 2e32 2e30 3a20 5475 6520 4175 6720 2039 2032 303a 3534 3a30 3020 5044 5420 3230 3131 3b20 726f 6f74 3a78 6e75 2d31 3639 392e 3234 2e38 7e31 2f52 454c 4541 5345 5f58 3836 5f36 3420 7838 365f 3634'.replace(/ /g, ''), 'hex');
 // A OID GetNextReponse
 var ex8 = new Buffer('30 35 02 01 01 04 07 70 72 69 76 61 74 65 a2 27 02 04 e6 34 17 a0 02 01 00 02 01 00 30 19 30 17 06 08 2b 06 01 02 01 01 02 00 06 0b 2b 06 01 04 01 bf 08 03 02 81 7f'.replace(/ /g, ''), 'hex');
-// An IpAddress GetNextResponst
+// An IpAddress GetNextResponse
 var ex9 = new Buffer('30 36 02 01 01 04 07 70 72 69 76 61 74 65 a2 28 02 04 45 20 95 bb 02 01 00 02 01 00 30 1a 30 18 06 10 2b 06 01 02 01 03 01 01 03 04 01 81 2c 14 0a 01 40 04 ac 14 0a 01'.replace(/ /g, ''), 'hex');
+// Some random dudes error packet
+var ex10 = new Buffer('30 82 00 61 02 01 01 04 06 70 75 62 6c 69 63 a2 82 00 52 02 04 2a 96 a4 01 02 01 00 02 01 00 30 82 00 42 30 82 00 1f 06 82 00 08 2b 06 01 02 01 01 05 00 04 11 44 6f 63 75 50 72 69 6e 74 20 43 4d 32 30 35 20 66 30 82 00 1b 06 82 00 0b 2b 06 01 02 01 2b 05 01 01 11 01 04 0a 57 46 47 2d 30 31 33 34 37 35'.replace(/ /g, ''), 'hex');
 
 describe('snmp', function () {
     describe('encode()', function () {
@@ -130,6 +132,11 @@ describe('snmp', function () {
             var pkt = snmp.parse(ex9);
             assert.equal(64, pkt.pdu.varbinds[0].type);
             assert.deepEqual([172,20,10,1], pkt.pdu.varbinds[0].value);
+        });
+        it('does not error out on a random packet', function () {
+            var pkt = snmp.parse(ex10);
+            assert.equal("DocuPrint CM205 f", pkt.pdu.varbinds[0].value);
+            assert.equal("WFG-013475", pkt.pdu.varbinds[1].value);
         });
     });
 
