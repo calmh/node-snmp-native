@@ -10,7 +10,7 @@
     "monitoring"
   ],
   "homepage": "http://nym.se/node-snmp-native/docs/",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "main": "lib/snmp.js",
   "scripts": {
     "test": "NODE_PATH=lib mocha -R spec",
