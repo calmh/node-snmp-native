@@ -1,5 +1,5 @@
 var assert = require('assert');
-var asn1ber = require('asn1ber');
+var asn1ber = require('../lib/asn1ber');
 
 describe('asn1ber', function () {
     describe('encodeInteger()', function () {
