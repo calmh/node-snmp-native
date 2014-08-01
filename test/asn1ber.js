@@ -77,6 +77,77 @@ describe('asn1ber', function () {
             assert.equal(210, buf[5]); // Value
         });
     });
+    
+    
+    describe('encodeCounter()', function () {
+        it('returns one byte for zero', function () {
+            var correct = '410100';
+            var buf = asn1ber.encodeCounter(0);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('returns one byte for one', function () {
+            var buf = asn1ber.encodeCounter(1);
+            assert.equal(3, buf.length);
+            assert.equal(0x41, buf[0]); // Gauge
+            assert.equal(1, buf[1]); // Length
+            assert.equal(1, buf[2]); // Value
+        });
+        it('does not return first byte and first bit of second byte all ones', function () {
+            var correct = '410300ff94';
+            var buf = asn1ber.encodeCounter(0xff94);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('does not return a negative-looking integer', function () {
+            var correct = '41020088';
+            var buf = asn1ber.encodeCounter(0x88);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('returns correctly for larger integer', function () {
+            var buf = asn1ber.encodeCounter(1234567890);
+            assert.equal(6, buf.length);
+            assert.equal(0x41, buf[0]); // Gauge
+            assert.equal(4, buf[1]); // Length
+            assert.equal(73, buf[2]); // Value
+            assert.equal(150, buf[3]); // Value
+            assert.equal(2, buf[4]); // Value
+            assert.equal(210, buf[5]); // Value
+        });
+    });
+
+    describe('encodeTimeTicks()', function () {
+        it('returns one byte for zero', function () {
+            var correct = '430100';
+            var buf = asn1ber.encodeTimeTicks(0);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('returns one byte for one', function () {
+            var buf = asn1ber.encodeTimeTicks(1);
+            assert.equal(3, buf.length);
+            assert.equal(0x43, buf[0]); // Gauge
+            assert.equal(1, buf[1]); // Length
+            assert.equal(1, buf[2]); // Value
+        });
+        it('does not return first byte and first bit of second byte all ones', function () {
+            var correct = '430300ff94';
+            var buf = asn1ber.encodeTimeTicks(0xff94);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('does not return a negative-looking integer', function () {
+            var correct = '43020088';
+            var buf = asn1ber.encodeTimeTicks(0x88);
+            assert.equal(correct, buf.toString('hex'));
+        });
+        it('returns correctly for larger integer', function () {
+            var buf = asn1ber.encodeTimeTicks(1234567890);
+            assert.equal(6, buf.length);
+            assert.equal(0x43, buf[0]); // Gauge
+            assert.equal(4, buf[1]); // Length
+            assert.equal(73, buf[2]); // Value
+            assert.equal(150, buf[3]); // Value
+            assert.equal(2, buf[4]); // Value
+            assert.equal(210, buf[5]); // Value
+        });
+    });
 
     describe('encodeNull()', function () {
         it('returns the null representation', function () {
@@ -179,6 +250,11 @@ describe('asn1ber', function () {
                 assert.equal("SNMP OIDs always start with .1.3.", err.message);
                 done();
             }
+        });
+        it('doesn\'t throw an exception for incorrect SNMP OIDs if skipping validatoin', function () {
+            var buf = asn1ber.encodeOid([1, 5, 6, 7, 8], true);
+            var correct = '06 04 2d 06 07 08'.replace(/ /g, '');
+            assert.equal(correct, buf.toString('hex'));
         });
         it('returns an oid correctly', function () {
             var oid = [1, 3, 6, 1, 4, 1, 2680, 1234567, 2, 7, 3, 2, 0];
