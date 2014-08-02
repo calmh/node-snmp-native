@@ -4,7 +4,7 @@
 var assert = require('assert');
 var dgram = require('dgram');
 var should = require('should');
-var snmp = require('snmp');
+var snmp = require('../lib/snmp');
 var snmpsrv = require('snmpjs');
 
 var agent = snmpsrv.createAgent();
