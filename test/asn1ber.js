@@ -77,8 +77,8 @@ describe('asn1ber', function () {
             assert.equal(210, buf[5]); // Value
         });
     });
-    
-    
+
+
     describe('encodeCounter()', function () {
         it('returns one byte for zero', function () {
             var correct = '410100';
@@ -245,16 +245,11 @@ describe('asn1ber', function () {
         });
         it('throws an exception for incorrect SNMP OIDs', function (done) {
             try {
-                asn1ber.encodeOid([2, 5, 6, 7, 8]);
+                asn1ber.encodeOid([8, 8, 6, 7, 8]);
             } catch (err) {
-                assert.equal("SNMP OIDs always start with .1.3.", err.message);
+                assert.equal("Invalid OID", err.message);
                 done();
             }
-        });
-        it('doesn\'t throw an exception for incorrect SNMP OIDs if skipping validatoin', function () {
-            var buf = asn1ber.encodeOid([1, 5, 6, 7, 8], true);
-            var correct = '06 04 2d 06 07 08'.replace(/ /g, '');
-            assert.equal(correct, buf.toString('hex'));
         });
         it('returns an oid correctly', function () {
             var oid = [1, 3, 6, 1, 4, 1, 2680, 1234567, 2, 7, 3, 2, 0];
@@ -263,8 +258,8 @@ describe('asn1ber', function () {
             assert.equal(correct, buf.toString('hex'));
         });
         it('returns an oid correctly even though the oid doesn\'t start with .1.3', function () {
-            var oid = [1, 0, 8802, 1, 1, 2, 1, 4, 1, 1, 9];
-            var correct = '06 0b 28 c4 62 01 01 02 01 04 01 01 09'.replace(/ /g, '');
+            var oid = [2, 77, 8802, 1, 1, 2, 1, 4, 1, 1, 9];
+            var correct = '06 0b 9d c4 62 01 01 02 01 04 01 01 09'.replace(/ /g, '');
             var buf = asn1ber.encodeOid(oid);
             assert.equal(correct, buf.toString('hex'));
         });
