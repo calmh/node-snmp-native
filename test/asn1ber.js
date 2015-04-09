@@ -367,6 +367,12 @@ describe('asn1ber', function () {
             var oid = asn1ber.parseOid(buf);
             assert.deepEqual(correct, oid);
         });
+        it('correctly parses an oid with a second octet > 39', function () {
+            var correct = [2, 77, 6, 1, 4, 1, 2680, 1, 2, 7, 3, 2, 0];
+            var buf = new Buffer('06 0d 9d 06 01 04 01 94 78 01 02 07 03 02 00'.replace(/ /g, ''), 'hex');
+            var oid = asn1ber.parseOid(buf);
+            assert.deepEqual(correct, oid);
+        });
     });
 
     describe('parseArray()', function () {
