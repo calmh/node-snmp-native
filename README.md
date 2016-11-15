@@ -98,6 +98,8 @@ on each `get`, `getAll`, etc.
    between each). A backoff can be implemented by timeouts along the lines of
    `[ 1000, 2000, 4000, 8000 ]`. Retransmissions can be disabled by using only
    a single timeout value: `[ 5000 ]`.
+ - `max_repetitions`: The number of objects to get when using getBulk().
+   Default: `10`.
 
 ### VarBind objects
 
@@ -204,6 +206,48 @@ the callback is called with an error and the partial results.
 
 ```javascript
 session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
+    if (error) {
+        console.log('Fail :(');
+    } else {
+        varbinds.forEach(function (vb) {
+            console.log(vb.oid + ' = ' + vb.value + ' (' + vb.type + ')');
+        });
+    }
+});
+```
+### getBulk(options, callback)
+
+Perform GetBulkRequests to fetch `max_repetitions` values in the specified tree. Options:
+
+ - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - `max_repetitions`: The number of objects to get.
+
+Will call the specified `callback` with an `error` object (`null` on success)
+and the list of varbinds that was fetched.
+
+```javascript
+session.getBulk({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
+    if (error) {
+        console.log('Fail :(');
+    } else {
+        varbinds.forEach(function (vb) {
+            console.log(vb.oid + ' = ' + vb.value + ' (' + vb.type + ')');
+        });
+    }
+});
+```
+### getSubtreeBulk(options, callback)
+
+Perform repeated GetBulkRequests to fetch all values in the specified tree. Options:
+
+ - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - `max_repetitions`: The number of objects to get.
+
+Will call the specified `callback` with an `error` object (`null` on success)
+and the list of varbinds that was fetched.
+
+```javascript
+session.getSubtreeBulk({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
     if (error) {
         console.log('Fail :(');
     } else {
