@@ -239,6 +239,17 @@ it without a callback:
 session.set({ oid: [1, 3, 6, 1, 4, 1, 42, 1, 0], value: 42, type: 2 });
 ```
 
+### close()
+
+Cancels all outstanding requests and frees used OS resources. Outstanding
+requests will call their callback with the "Cancelled" error set.
+
+Example:
+
+```javascript
+session.close();
+```
+
 License
 =======
 
