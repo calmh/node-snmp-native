@@ -172,11 +172,14 @@ flooding hosts. Options:
    '.1.3.6.1.4.1.2.3.4.5']`.
  - `abortOnError`: Whether to stop or continue when an error is encountered.
    Default: `false`.
+ - `combinedTimeout`: Timeout in milliseconds that the getAll() may take.
+   Default: no timeout.
 
 The callback will be called with an error object or a list of varbinds. If the
 options property `abortOnError` is false (default) any variables that couldn't
 be fetched will simply be omitted from the results. If it is true, the callback
-will be called with an error object on any failure.
+will be called with an error object on any failure. If the `combinedTimeout` is
+triggered, the callback is called with an error and the partial results.
 
 ```javascript
 var oids = [ [1, 3, 6, 1, 4, 1, 42, 1, 0], [1, 3, 6, 1, 4, 1, 42, 2, 0], ... ];
@@ -192,9 +195,12 @@ session.getAll({ oids: oids }, function (error, varbinds) {
 Perform repeated GetNextRequests to fetch all values in the specified tree. Options:
 
  - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
+ - `combinedTimeout`: Timeout in milliseconds that the getSubtree() may take.
+   Default: no timeout.
 
 Will call the specified `callback` with an `error` object (`null` on success)
-and the list of varbinds that was fetched.
+and the list of varbinds that was fetched. If the `combinedTimeout` is triggered,
+the callback is called with an error and the partial results.
 
 ```javascript
 session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
