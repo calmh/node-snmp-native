@@ -3,5 +3,8 @@ module.exports = {
       "node": true,
       "commonjs": true
     },
-    "extends": "eslint:recommended"
+    "extends": "eslint:recommended",
+    "rules": {
+      "no-console": 0
+    }
 };
