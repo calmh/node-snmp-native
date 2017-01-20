@@ -14,7 +14,7 @@
   "license": "MIT",
   "main": "lib/snmp.js",
   "scripts": {
-    "test": "npm run lint && NODE_PATH=lib mocha -R spec",
+    "test": "NODE_PATH=lib mocha -R spec",
     "lint": "eslint lib",
     "doc": "docco lib/* example.js 2>/dev/null",
     "cov": "jscoverage lib lib-cov && EXPRESS_COV=1 NODE_PATH=lib-cov mocha -R html-cov > docs/coverage.html"
