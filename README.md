@@ -236,27 +236,6 @@ session.getBulk({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
     }
 });
 ```
-### getSubtreeBulk(options, callback)
-
-Perform repeated GetBulkRequests to fetch all values in the specified tree. Options:
-
- - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or `'.1.3.6.1.4.1.1.2.3.4'`.
- - `max_repetitions`: The number of objects to get.
-
-Will call the specified `callback` with an `error` object (`null` on success)
-and the list of varbinds that was fetched.
-
-```javascript
-session.getSubtreeBulk({ oid: [1, 3, 6, 1, 4, 1, 42] }, function (error, varbinds) {
-    if (error) {
-        console.log('Fail :(');
-    } else {
-        varbinds.forEach(function (vb) {
-            console.log(vb.oid + ' = ' + vb.value + ' (' + vb.type + ')');
-        });
-    }
-});
-```
 
 ### set(options, callback)
 
