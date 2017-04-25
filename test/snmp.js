@@ -48,6 +48,48 @@ describe('snmp', function () {
             var msg = snmp.encode(pkt);
             assert.equal(msg.toString('hex'), correct);
         });
+        it('returns a correctly formatted buffer from a NoSuchObject packet', function () {
+            var correct = '302c 0201 0104 0770 7269 7661 7465 a01e 0201 0502 0106 0201 0730 1330 1106 0d2b 0601 0401 9478 0102 0703 0200 8000'.replace(/ /g, '');
+            var pkt = new snmp.Packet(); // A default getrequest
+            pkt.community = 'private';
+            pkt.pdu.reqid = 5;
+            pkt.pdu.error = 6;
+            pkt.pdu.errorIndex = 7;
+            pkt.pdu.varbinds = [{
+                type: 0x80,
+                oid: [1, 3, 6, 1, 4, 1, 2680, 1, 2, 7, 3, 2, 0]
+            }];
+            var msg = snmp.encode(pkt);
+            assert.equal(msg.toString('hex'), correct);
+        });
+        it('returns a correctly formatted buffer from a NoSuchInstance packet', function () {
+            var correct = '302c 0201 0104 0770 7269 7661 7465 a01e 0201 0502 0106 0201 0730 1330 1106 0d2b 0601 0401 9478 0102 0703 0200 8100'.replace(/ /g, '');
+            var pkt = new snmp.Packet(); // A default getrequest
+            pkt.community = 'private';
+            pkt.pdu.reqid = 5;
+            pkt.pdu.error = 6;
+            pkt.pdu.errorIndex = 7;
+            pkt.pdu.varbinds = [{
+                type: 0x81,
+                oid: [1, 3, 6, 1, 4, 1, 2680, 1, 2, 7, 3, 2, 0]
+            }];
+            var msg = snmp.encode(pkt);
+            assert.equal(msg.toString('hex'), correct);
+        });
+        it('returns a correctly formatted buffer from a NoSuchObject packet', function () {
+            var correct = '302c 0201 0104 0770 7269 7661 7465 a01e 0201 0502 0106 0201 0730 1330 1106 0d2b 0601 0401 9478 0102 0703 0200 8200'.replace(/ /g, '');
+            var pkt = new snmp.Packet(); // A default getrequest
+            pkt.community = 'private';
+            pkt.pdu.reqid = 5;
+            pkt.pdu.error = 6;
+            pkt.pdu.errorIndex = 7;
+            pkt.pdu.varbinds = [{
+                type: 0x82,
+                oid: [1, 3, 6, 1, 4, 1, 2680, 1, 2, 7, 3, 2, 0]
+            }];
+            var msg = snmp.encode(pkt);
+            assert.equal(msg.toString('hex'), correct);
+        });
     });
 
     describe('parse()', function () {
@@ -162,4 +204,3 @@ describe('snmp', function () {
         });
     });
 });
-

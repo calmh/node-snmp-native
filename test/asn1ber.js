@@ -158,6 +158,33 @@ describe('asn1ber', function () {
         });
     });
 
+    describe('encodeNoSuchObject()', function() {
+        it('returns the noSuchObject representation', function () {
+            var buf = asn1ber.encodeNoSuchObject();
+            assert.equal(2, buf.length);
+            assert.equal(0x80, buf[0]); // Null
+            assert.equal(0, buf[1]); // Zero
+        });
+    });
+
+    describe('encodeNoSuchInstance()', function() {
+        it('returns the noSuchInstance representation', function () {
+            var buf = asn1ber.encodeNoSuchInstance();
+            assert.equal(2, buf.length);
+            assert.equal(0x81, buf[0]); // Null
+            assert.equal(0, buf[1]); // Zero
+        });
+    });
+
+    describe('encodeEndOfMibView()', function() {
+        it('returns the endOfMibView representation', function () {
+            var buf = asn1ber.encodeEndOfMibView();
+            assert.equal(2, buf.length);
+            assert.equal(0x82, buf[0]); // Null
+            assert.equal(0, buf[1]); // Zero
+        });
+    });
+
     describe('encodeSequence()', function () {
         it('returns an empty sequence', function () {
             var buf = asn1ber.encodeSequence(new Buffer(0));
