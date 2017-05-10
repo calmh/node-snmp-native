@@ -10,7 +10,7 @@
     "monitoring"
   ],
   "homepage": "http://nym.se/node-snmp-native/docs/",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "main": "lib/snmp.js",
   "scripts": {
