@@ -41,9 +41,6 @@ random network gear).
 Documentation
 =============
 
-See API documentation below, the [annotated source code](http://nym.se/node-snmp-native/docs/snmp.html)
-and an [example](http://nym.se/node-snmp-native/docs/example.html) to get started.
-
 Installation
 ------------
 
@@ -121,7 +118,7 @@ Perform a simple GetRequest. Options (in addition to the ones defined above for 
  - `oid`: The OID to get. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]` or
    `'.1.3.6.1.4.1.1.2.3.4'`. Both forms are accepted, but the string form will
    need to be parsed to an array, slightly increasing CPU usage.
- 
+
 Will call the specified `callback` with an `error` object (`null` on success)
 and the varbind that was received.
 
@@ -221,7 +218,7 @@ Perform a simple SetRequest. Options:
  - `oid`: The OID to perform the set on. Example: `[1, 3, 6, 1, 4, 1, 1, 2, 3, 4]`
    or `'.1.3.6.1.4.1.1.2.3.4'`.
  - `value`: The value to set. Example: `42`.
- - `type`: The type of the value. Currently supports `asn1ber.T.Integer` (2), `asn1ber.T.Gauge` (66), 
+ - `type`: The type of the value. Currently supports `asn1ber.T.Integer` (2), `asn1ber.T.Gauge` (66),
    `asn1ber.T.IpAddress` (64), `asn1ber.T.OctetString` (4) and `asn1ber.T.Null` (5).
    Example: `2`.
 
