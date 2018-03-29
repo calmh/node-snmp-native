@@ -95,6 +95,11 @@ on each `get`, `getAll`, etc.
    between each). A backoff can be implemented by timeouts along the lines of
    `[ 1000, 2000, 4000, 8000 ]`. Retransmissions can be disabled by using only
    a single timeout value: `[ 5000 ]`.
+ - `sourceAddress`: The IP address to bind the socket to, and where requests
+   are coming from. Must be an IP address on the node, if specified.
+   Default is to bind to all interfaces.
+ - `sourcePort`: The UDP port number to bind the socket to, and where requests
+   are coming from.  Default: `0` (random).
 
 ### VarBind objects
 
