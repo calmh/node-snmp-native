@@ -95,6 +95,10 @@ on each `get`, `getAll`, etc.
    between each). A backoff can be implemented by timeouts along the lines of
    `[ 1000, 2000, 4000, 8000 ]`. Retransmissions can be disabled by using only
    a single timeout value: `[ 5000 ]`.
+ - `bindPort`: UDP port used to bind the socket locally. Default: `0` (random port)
+ - `msgReceived`: A `(message, rinfo) => {}` function responsible to handle incoming
+   messages and sending UDP responses back. If nothing is given here, the default implementation
+   is used. This is useful if you want to implement custom logic in your application
 
 ### VarBind objects
 
