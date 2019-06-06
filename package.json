@@ -15,15 +15,15 @@
   "main": "lib/snmp.js",
   "scripts": {
     "test": "NODE_PATH=lib mocha -R spec",
-    "hint": "jshint *.js lib/*.js",
+    "lint": "eslint lib",
     "doc": "docco lib/* example.js 2>/dev/null",
     "cov": "jscoverage lib lib-cov && EXPRESS_COV=1 NODE_PATH=lib-cov mocha -R html-cov > docs/coverage.html"
   },
   "dependencies": {},
   "devDependencies": {
     "docco": "~0.6.2",
+    "eslint": "^3.13.1",
     "jscoverage": "~0.3.6",
-    "jshint": "~1.1.0",
     "mocha": "~1.9.0",
     "should": "~1.2.2",
     "snmpjs": "~0.1.3"
