@@ -14,19 +14,20 @@
   "license": "MIT",
   "main": "lib/snmp.js",
   "scripts": {
+    "lint": "eslint .",
     "test": "NODE_PATH=lib mocha -R spec",
-    "hint": "jshint *.js lib/*.js",
     "doc": "docco lib/* example.js 2>/dev/null",
     "cov": "jscoverage lib lib-cov && EXPRESS_COV=1 NODE_PATH=lib-cov mocha -R html-cov > docs/coverage.html"
   },
   "dependencies": {},
   "devDependencies": {
-    "docco": "~0.6.2",
-    "jscoverage": "~0.3.6",
-    "jshint": "~1.1.0",
-    "mocha": "~1.9.0",
-    "should": "~1.2.2",
-    "snmpjs": "~0.1.3"
+    "docco": "^0.8.0",
+    "eslint": "^5.16.0",
+    "jscoverage": "^0.6.0",
+    "mocha": "^6.1.4",
+    "prettier": "^1.17.1",
+    "should": "^13.2.3",
+    "snmpjs": "^0.1.3"
   },
   "repository": {
     "type": "git",
