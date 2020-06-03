@@ -1,7 +1,7 @@
 {
-  "name": "snmp-native",
+  "name": "snmp-node",
   "description": "A native Javascript SNMP implementation for Node.js",
-  "author": "Jakob Borg <jakob@nym.se> (http://nym.se/)",
+  "author": "Emre Acar <emreacar@hotmail.com>",
   "keywords": [
     "snmp",
     "asn.1",
@@ -9,7 +9,7 @@
     "network",
     "monitoring"
   ],
-  "homepage": "http://nym.se/node-snmp-native/docs/",
+  "homepage": "https://github.com/neias/snmp-node",
   "version": "1.2.0",
   "license": "MIT",
   "main": "lib/snmp.js",
@@ -29,10 +29,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/neias/node-snmp-native.git"
+    "url": "git://github.com/neias/snmp-node.git"
   },
   "bugs": {
-    "url": "https://github.com/neias/node-snmp-native/issues",
+    "url": "https://github.com/neias/snmp-node/issues",
     "email": "emreacar@hotmail.com"
   }
 }
